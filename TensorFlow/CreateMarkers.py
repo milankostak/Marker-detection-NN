@@ -4,16 +4,16 @@ import glob
 import random
 import shutil
 
-files2015 = glob.glob("C:/Programy/EasyPHP-Devserver-17/eds-www/2015/thumbs/*/*.jpg")
-files2016 = glob.glob("C:/Programy/EasyPHP-Devserver-17/eds-www/2016/thumbs/*/*.jpg")
-files2017 = glob.glob("C:/Programy/EasyPHP-Devserver-17/eds-www/2017/thumbs/*/*.jpg")
-files2018 = glob.glob("C:/Programy/EasyPHP-Devserver-17/eds-www/2018/thumbs/*/*.jpg")
-files2019 = glob.glob("C:/Programy/EasyPHP-Devserver-17/eds-www/2019/thumbs/*/*.jpg")
+files2015 = glob.glob("..../*.jpg")
+files2016 = glob.glob("..../*.jpg")
+files2017 = glob.glob("..../*.jpg")
+files2018 = glob.glob("..../*.jpg")
+files2019 = glob.glob("..../*.jpg")
 
 files = files2015 + files2016 + files2017 + files2018 + files2019
 print("Total images count: ", files.__len__())
 
-folder = "D:/Python/PycharmProjects/images4/"
+folder = "...."
 trainFolder = folder + "train/"
 valFolder = folder + "val/"
 testFolder = folder + "test/"
