@@ -10,10 +10,13 @@ files2017 = glob.glob("..../*.jpg")
 files2018 = glob.glob("..../*.jpg")
 files2019 = glob.glob("..../*.jpg")
 
+# mode = "rectangle"
+mode = "triangle_empty"
+
 files = files2015 + files2016 + files2017 + files2018 + files2019
 print("Total images count: ", files.__len__())
 
-folder = "...."
+folder = "D:/Python/PycharmProjects/images/"
 trainFolder = folder + "train/"
 valFolder = folder + "val/"
 testFolder = folder + "test/"
@@ -44,21 +47,28 @@ for file in files:
 
     imgH, imgW, channels = source.shape
 
-    width = random.randint(5, 60)
-    height = random.randint(6, 50)
-    x = random.randint(1, imgW - width - 1)
-    y = random.randint(1, imgH - height - 1)
-    color = (0, 200, 0)
+    if mode == "rectangle":
+        width = random.randint(5, 60)
+        height = random.randint(6, 50)
+        x = random.randint(1, imgW - width - 1)
+        y = random.randint(1, imgH - height - 1)
+        color = (0, 200, 0)
 
-    # Integer from 1 to 10, endpoints included
-    # makeMarker = random.randint(1, 10) <= 6  # 60 % maker, 40 % no marker
-    # makeMarker = True  # maker marker always
+        cv2.rectangle(source, (x, y), (x + width, y + height), color, -1)
+        print(counter, os.path.abspath(newFile), imgW, imgH, 0, x, y, x + width, y + height)
 
-    # if makeMarker:
-    cv2.rectangle(source, (x, y), (x + width, y + height), color, -1)
-    print(counter, os.path.abspath(newFile), imgW, imgH, 0, x, y, x + width, y + height)
-    # else:
-    #     print(counter, os.path.abspath(newFile), imgW, imgH)
+    elif mode == "triangle_empty":
+        wh = random.randint(15, 60)
+        x = random.randint(1, imgW - wh - 1)
+        y = random.randint(1, imgH - wh - 1)
+        color = (0, 200, 0)
+        thickness = 2
+
+        # draw triangle
+        cv2.line(source, (x, y + wh), (x + wh, y + wh), color, thickness)  # bottom line
+        cv2.line(source, (x, y + wh), (int(x + wh / 2), y), color, thickness)  # left line
+        cv2.line(source, (x + wh, y + wh), (int(x + wh / 2), y), color, thickness)  # right line
+        print(counter, os.path.abspath(newFile), imgW, imgH, 0, x, y, x + wh, y + wh)
 
     cv2.imwrite(newFile, source)
     counter += 1
