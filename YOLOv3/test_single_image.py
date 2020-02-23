@@ -66,9 +66,9 @@ with tf.Session() as sess:
     saver.restore(sess, args.restore_path)
 
     test_images = glob.glob("D:/Python/PycharmProjects/" + images_folder + "/test/*.jpg")
+    results = ""
 
     for test_image in test_images:
-
         img_ori = cv2.imread(test_image)
         name = test_image[39:-4]
         if args.letterbox_resize:
@@ -87,8 +87,8 @@ with tf.Session() as sess:
             boxes_[:, [0, 2]] = (boxes_[:, [0, 2]] - dw) / resize_ratio
             boxes_[:, [1, 3]] = (boxes_[:, [1, 3]] - dh) / resize_ratio
         else:
-            boxes_[:, [0, 2]] *= (width_ori/float(args.new_size[0]))
-            boxes_[:, [1, 3]] *= (height_ori/float(args.new_size[1]))
+            boxes_[:, [0, 2]] *= (width_ori / float(args.new_size[0]))
+            boxes_[:, [1, 3]] *= (height_ori / float(args.new_size[1]))
 
         # print("box coords:")
         # print(boxes_)
@@ -99,9 +99,19 @@ with tf.Session() as sess:
         # print("labels:")
         # print(labels_)
 
+        results += name
+        for j in range(0, len(boxes_)):
+            results += (" " + str(boxes_[j][0]) + " " + str(boxes_[j][1]) + " " + str(boxes_[j][2]) + " " + str(boxes_[j][3]))
+        results += "\n"
+
         for i in range(len(boxes_)):
             x0, y0, x1, y1 = boxes_[i]
-            plot_one_box(img_ori, [x0, y0, x1, y1], label=args.classes[labels_[i]] + ', {:.2f}%'.format(scores_[i] * 100), color=color_table[labels_[i]])
-        cv2.imshow('Detection result', img_ori)
-        cv2.imwrite('./test_eval/' + name + '_eval.jpg', img_ori)
-        cv2.waitKey(0)
+            plot_one_box(img_ori, [x0, y0, x1, y1],
+                         label=args.classes[labels_[i]] + ', {:.2f}%'.format(scores_[i] * 100),
+                         color=color_table[labels_[i]])
+        # cv2.imshow('Detection result', img_ori)
+        # cv2.imwrite('./test_eval/' + name + '_eval.jpg', img_ori)
+        # cv2.waitKey(0)
+
+    with open("./predicted.txt", "w") as file:
+        file.write(results)
