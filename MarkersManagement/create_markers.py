@@ -3,6 +3,7 @@ import os
 import glob
 import random
 import shutil
+import numpy as np
 
 files2015 = glob.glob("..../*.jpg")
 files2016 = glob.glob("..../*.jpg")
@@ -10,8 +11,10 @@ files2017 = glob.glob("..../*.jpg")
 files2018 = glob.glob("..../*.jpg")
 files2019 = glob.glob("..../*.jpg")
 
-# mode = "rectangle"
-mode = "triangle_empty"
+# mode = "rectangle_filled"
+# mode = "rectangle_empty"
+mode = "triangle_filled"
+# mode = "triangle_empty"
 
 files = files2015 + files2016 + files2017 + files2018 + files2019
 print("Total images count:", files.__len__())
@@ -51,30 +54,36 @@ for file in files:
     source = cv2.imread(newFile)
 
     imgH, imgW, channels = source.shape
-    data = []
 
-    if mode == "rectangle":
-        width = random.randint(5, 60)
-        height = random.randint(6, 50)
-        x = random.randint(1, imgW - width - 1)
-        y = random.randint(1, imgH - height - 1)
-        color = (0, 200, 0)
+    width = random.randint(5, 60)
+    height = random.randint(6, 50)
+    x = random.randint(1, imgW - width - 1)
+    y = random.randint(1, imgH - height - 1)
+    color = (0, 200, 0)
+    thickness = 2
+    data = [counter, os.path.abspath(newFile), imgW, imgH, 0, x, y, x + width, y + height]
 
+    if mode == "rectangle_filled":
         cv2.rectangle(source, (x, y), (x + width, y + height), color, -1)
-        print(counter, os.path.abspath(newFile), imgW, imgH, 0, x, y, x + width, y + height)
-        data = [counter, os.path.abspath(newFile), imgW, imgH, 0, x, y, x + width, y + height]
 
-    elif mode == "triangle_empty":
-        wh = random.randint(15, 60)
-        x = random.randint(1, imgW - wh - 1)
-        y = random.randint(1, imgH - wh - 1)
-        color = (0, 200, 0)
-        thickness = 2
+    elif mode == "rectangle_empty":
+        cv2.line(source, (x, y), (x + width, y), color, thickness)  # top line
+        cv2.line(source, (x, y + height), (x + width, y + height), color, thickness)  # bottom line
+        cv2.line(source, (x, y), (x, y + height), color, thickness)  # left line
+        cv2.line(source, (x + width, y), (x + width, y + height), color, thickness)  # right line
 
-        cv2.line(source, (x, y + wh), (x + wh, y + wh), color, thickness)  # bottom line
-        cv2.line(source, (x, y + wh), (int(x + wh / 2), y), color, thickness)  # left line
-        cv2.line(source, (x + wh, y + wh), (int(x + wh / 2), y), color, thickness)  # right line
-        data = [counter, os.path.abspath(newFile), imgW, imgH, 0, x, y, x + wh, y + wh]
+    elif mode == "triangle_filled" or mode == "triangle_empty":
+        pt0 = (int(x + width / 2), y)  # top
+        pt1 = (x, y + height)  # left bottom
+        pt2 = (x + width, y + height)  # right bottom
+
+        if mode == "triangle_filled":
+            triangle_points = np.array([pt0, pt1, pt2])
+            cv2.drawContours(source, [triangle_points], 0, color, -1)
+        else:
+            cv2.line(source, pt0, pt1, color, thickness)  # left line
+            cv2.line(source, pt0, pt2, color, thickness)  # right line
+            cv2.line(source, pt1, pt2, color, thickness)  # bottom line
 
     row = ' '.join(str(e) for e in data)
     if counter % 10 < 7:  # <0;6>
