@@ -32,6 +32,9 @@ with open('D:\\Python\\PycharmProjects\\' + images_folder + '\\predicted.txt') a
     pred_lines = [line.rstrip() for line in file]
 
 all_ious = list()
+false_positive_count = 0
+false_positive_threshold = 0.2
+
 count = len(gt_lines)
 for i in range(count):
     gt_line = gt_lines[i].split(" ")
@@ -44,6 +47,8 @@ for i in range(count):
         for j in range(1, pred_count, 4):
             pred_box = [float(pred_line[j]), float(pred_line[j + 1]), float(pred_line[j + 2]), float(pred_line[j + 3])]
             possible_iou = bb_intersection_over_union(gt_box, pred_box)
+            if possible_iou < false_positive_threshold:
+                false_positive_count += 1
             possible_ious.append(possible_iou)
 
     if len(possible_ious) != 0:
@@ -56,3 +61,4 @@ for i in range(count):
 
 result = np.array(all_ious).mean()
 print(result)
+print("false positive:", false_positive_count)
