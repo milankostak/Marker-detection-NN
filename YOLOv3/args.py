@@ -1,5 +1,5 @@
 # coding: utf-8
-# This file contains the parameter used in train.py
+# This file contains the parameters used in train.py
 
 from __future__ import division, print_function
 

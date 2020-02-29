@@ -4,6 +4,8 @@
 from __future__ import division, print_function
 
 import numpy as np
+import YOLOv3.args as args
+
 
 def iou(box, clusters):
     """
@@ -123,7 +125,6 @@ def parse_anno(annotation_path, target_size=None):
 
 
 def get_kmeans(anno, cluster_num=9):
-
     anchors = kmeans(anno, cluster_num)
     ave_iou = avg_iou(anno, anchors)
 
@@ -139,7 +140,7 @@ if __name__ == '__main__':
     # if target_resize is specified, the anchors are on the resized image scale
     # if target_resize is set to None, the anchors are on the original image scale
     target_size = [416, 416]
-    annotation_path = "train.txt"
+    annotation_path = args.train_file
     anno_result = parse_anno(annotation_path, target_size=target_size)
     anchors, ave_iou = get_kmeans(anno_result, 9)
 
@@ -152,4 +153,3 @@ if __name__ == '__main__':
     print(anchor_string)
     print('the average iou is:')
     print(ave_iou)
-
