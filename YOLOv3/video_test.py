@@ -4,10 +4,10 @@ from __future__ import division, print_function
 
 import tensorflow as tf
 import numpy as np
-import argparse
 import cv2
 import time
 
+from YOLOv3.utils.simple_object import SimpleObject
 from YOLOv3.utils.misc_utils import parse_anchors, read_class_names
 from YOLOv3.utils.nms_utils import gpu_nms
 from YOLOv3.utils.plot_utils import get_color_table, plot_one_box
@@ -15,27 +15,21 @@ from YOLOv3.utils.data_aug import letterbox_resize
 
 from YOLOv3.model import yolov3
 
-#################
-# ArgumentParser
-#################
-parser = argparse.ArgumentParser(description="YOLO-V3 video test procedure.")
+base_path = 'D:/Python/PycharmProjects/images/'
 
-images_folder = "images5"
-parser.add_argument("--input_video", type=str, default="todo",
-                    help="The path of the input video.")
-parser.add_argument("--anchor_path", type=str, default="./data/my_data/" + images_folder + "/marker_anchors.txt",
-                    help="The path of the anchor txt file.")
-parser.add_argument("--new_size", nargs='*', type=int, default=[416, 416],
-                    help="Resize the input image with `new_size`, size format: [width, height]")
-parser.add_argument("--letterbox_resize", type=lambda x: (str(x).lower() == 'true'), default=True,
-                    help="Whether to use the letterbox resize.")
-parser.add_argument("--class_name_path", type=str, default="./data/my_data/" + images_folder + "/data.names",
-                    help="The path of the class names.")
-parser.add_argument("--restore_path", type=str, default="./data/darknet_weights/yolov3.ckpt",
-                    help="The path of the weights to restore.")
-parser.add_argument("--save_video", type=lambda x: (str(x).lower() == 'true'), default=False,
-                    help="Whether to save the video detection results.")
-args = parser.parse_args()
+args = SimpleObject()
+# The path of the anchor txt file.
+args.anchor_path = base_path + "marker_anchors.txt"
+# Resize the input image with `new_size`, size format: [width, height]
+args.new_size = [416, 416]
+# Whether to use the letterbox resize.
+args.letterbox_resize = True
+# The path of the class names.
+args.class_name_path = base_path + "data.names"
+# The path of the weights to restore.
+args.restore_path = "./data/darknet_weights/yolov3.ckpt"
+# Whether to save the video detection results.
+args.save_video = False
 
 args.anchors = parse_anchors(args.anchor_path)
 args.classes = read_class_names(args.class_name_path)
@@ -43,13 +37,13 @@ args.num_class = len(args.classes)
 
 color_table = get_color_table(args.num_class)
 
-# vid = cv2.VideoCapture(args.input_video)
 vid = cv2.VideoCapture(0)  # web cam
 video_frame_cnt = int(vid.get(7))
 video_width = int(vid.get(3))
 video_height = int(vid.get(4))
 video_fps = int(vid.get(5))
 
+videoWriter = None
 if args.save_video:
     fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
     videoWriter = cv2.VideoWriter('video_result.mp4', fourcc, video_fps, (video_width, video_height))
@@ -89,9 +83,8 @@ with tf.Session() as sess:
             boxes_[:, [0, 2]] = (boxes_[:, [0, 2]] - dw) / resize_ratio
             boxes_[:, [1, 3]] = (boxes_[:, [1, 3]] - dh) / resize_ratio
         else:
-            boxes_[:, [0, 2]] *= (width_ori/float(args.new_size[0]))
-            boxes_[:, [1, 3]] *= (height_ori/float(args.new_size[1]))
-
+            boxes_[:, [0, 2]] *= (width_ori / float(args.new_size[0]))
+            boxes_[:, [1, 3]] *= (height_ori / float(args.new_size[1]))
 
         for i in range(len(boxes_)):
             x0, y0, x1, y1 = boxes_[i]
@@ -99,11 +92,11 @@ with tf.Session() as sess:
         cv2.putText(img_ori, '{:.2f}ms'.format((end_time - start_time) * 1000), (40, 40), 0,
                     fontScale=1, color=(0, 255, 0), thickness=2)
         cv2.imshow('image', img_ori)
-        # if args.save_video:
-        #     videoWriter.write(img_ori)
+        if args.save_video:
+            videoWriter.write(img_ori)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
     vid.release()
-    # if args.save_video:
-    #     videoWriter.release()
+    if args.save_video:
+        videoWriter.release()
