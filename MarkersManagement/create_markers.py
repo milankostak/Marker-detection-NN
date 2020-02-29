@@ -107,3 +107,7 @@ file.close()
 file = open(folder + "test.txt", "w")
 file.write(test_txt)
 file.close()
+
+file = open(folder + "data.names", "w")
+file.write("marker")
+file.close()

@@ -7,6 +7,7 @@ import numpy as np
 import argparse
 import cv2
 import glob
+import os
 
 from YOLOv3.utils.misc_utils import parse_anchors, read_class_names
 from YOLOv3.utils.nms_utils import gpu_nms
@@ -23,13 +24,13 @@ parser = argparse.ArgumentParser(description="YOLO-V3 test single image test pro
 base_path = 'D:/Python/PycharmProjects/images/'
 parser.add_argument("--input_image", type=str, default="todo",
                     help="The path of the input image.")
-parser.add_argument("--anchor_path", type=str, default=base_path + "/marker_anchors.txt",
+parser.add_argument("--anchor_path", type=str, default=base_path + "marker_anchors.txt",
                     help="The path of the anchor txt file.")
 parser.add_argument("--new_size", nargs='*', type=int, default=[416, 416],
                     help="Resize the input image with `new_size`, size format: [width, height]")
 parser.add_argument("--letterbox_resize", type=lambda x: (str(x).lower() == 'true'), default=True,
                     help="Whether to use the letterbox resize.")
-parser.add_argument("--class_name_path", type=str, default=base_path + "/data.names",
+parser.add_argument("--class_name_path", type=str, default=base_path + "data.names",
                     help="The path of the class names.")
 parser.add_argument("--restore_path", type=str, default="./data/darknet_weights/yolov3.ckpt",
                     help="The path of the weights to restore.")
@@ -40,6 +41,9 @@ args.classes = read_class_names(args.class_name_path)
 args.num_class = len(args.classes)
 
 color_table = get_color_table(args.num_class)
+
+if not os.path.exists(base_path + "test_eval/"):
+    os.mkdir(base_path + "test_eval/")
 
 # img_ori = cv2.imread(args.input_image)
 # if args.letterbox_resize:
@@ -65,7 +69,7 @@ with tf.Session() as sess:
     saver = tf.train.Saver()
     saver.restore(sess, args.restore_path)
 
-    test_images = glob.glob(base_path + "/test/*.jpg")
+    test_images = glob.glob(base_path + "test/*.jpg")
     results = ""
 
     for test_image in test_images:
@@ -111,7 +115,7 @@ with tf.Session() as sess:
                          color=color_table[labels_[i]])
         # cv2.imshow('Detection result', img_ori)
         # cv2.waitKey(0)
-        cv2.imwrite(base_path + '/test_eval/' + name + '_eval.jpg', img_ori)
+        cv2.imwrite(base_path + 'test_eval/' + name + '_eval.jpg', img_ori)
 
     with open(base_path + "predicted.txt", "w") as file:
         file.write(results)
