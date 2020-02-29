@@ -23,12 +23,12 @@ def bb_intersection_over_union(box_a, box_b):
     return iou
 
 
-images_folder = "images5"
+base_path = 'D:/Python/PycharmProjects/images/'
 
-with open('D:\\Python\\PycharmProjects\\Marker-detection-NN\\YOLOv3\\data\\my_data\\' + images_folder + '\\test.txt') as file:
+with open(base_path + 'test.txt') as file:
     gt_lines = [line.rstrip() for line in file]
 
-with open('D:\\Python\\PycharmProjects\\' + images_folder + '\\predicted.txt') as file:
+with open(base_path + 'predicted.txt') as file:
     pred_lines = [line.rstrip() for line in file]
 
 all_ious = list()

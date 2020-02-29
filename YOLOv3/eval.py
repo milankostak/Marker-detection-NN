@@ -18,14 +18,14 @@ from YOLOv3.utils.nms_utils import gpu_nms
 #################
 parser = argparse.ArgumentParser(description="YOLO-V3 eval procedure.")
 
-images_folder = "images5"
-parser.add_argument("--eval_file", type=str, default='./data/my_data/' + images_folder + "/test.txt",
+base_path = 'D:/Python/PycharmProjects/images/'
+parser.add_argument("--eval_file", type=str, default=base_path + "/test.txt",
                     help="The path of the validation or test txt file.")
 parser.add_argument("--restore_path", type=str, default="./data/darknet_weights/yolov3.ckpt",
                     help="The path of the weights to restore.")
-parser.add_argument("--anchor_path", type=str, default='./data/my_data/' + images_folder + "/marker_anchors.txt",
+parser.add_argument("--anchor_path", type=str, default=base_path + "/marker_anchors.txt",
                     help="The path of the anchor txt file.")
-parser.add_argument("--class_name_path", type=str, default='./data/my_data/' + images_folder + "/data.names",
+parser.add_argument("--class_name_path", type=str, default=base_path + "/data.names",
                     help="The path of the class names.")
 # some numbers
 parser.add_argument("--img_size", nargs='*', type=int, default=[416, 416],

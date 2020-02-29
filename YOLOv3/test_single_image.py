@@ -20,16 +20,16 @@ from YOLOv3.model import yolov3
 #################
 parser = argparse.ArgumentParser(description="YOLO-V3 test single image test procedure.")
 
-images_folder = "images5"
+base_path = 'D:/Python/PycharmProjects/images/'
 parser.add_argument("--input_image", type=str, default="todo",
                     help="The path of the input image.")
-parser.add_argument("--anchor_path", type=str, default="./data/my_data/" + images_folder + "/marker_anchors.txt",
+parser.add_argument("--anchor_path", type=str, default=base_path + "/marker_anchors.txt",
                     help="The path of the anchor txt file.")
 parser.add_argument("--new_size", nargs='*', type=int, default=[416, 416],
                     help="Resize the input image with `new_size`, size format: [width, height]")
 parser.add_argument("--letterbox_resize", type=lambda x: (str(x).lower() == 'true'), default=True,
                     help="Whether to use the letterbox resize.")
-parser.add_argument("--class_name_path", type=str, default="./data/my_data/" + images_folder + "/data.names",
+parser.add_argument("--class_name_path", type=str, default=base_path + "/data.names",
                     help="The path of the class names.")
 parser.add_argument("--restore_path", type=str, default="./data/darknet_weights/yolov3.ckpt",
                     help="The path of the weights to restore.")
@@ -65,12 +65,12 @@ with tf.Session() as sess:
     saver = tf.train.Saver()
     saver.restore(sess, args.restore_path)
 
-    test_images = glob.glob("D:/Python/PycharmProjects/" + images_folder + "/test/*.jpg")
+    test_images = glob.glob(base_path + "/test/*.jpg")
     results = ""
 
     for test_image in test_images:
         img_ori = cv2.imread(test_image)
-        name = test_image[39:-4]
+        name = test_image[-8:-4]
         if args.letterbox_resize:
             img, resize_ratio, dw, dh = letterbox_resize(img_ori, args.new_size[0], args.new_size[1])
         else:
@@ -110,8 +110,8 @@ with tf.Session() as sess:
                          label=args.classes[labels_[i]] + ', {:.2f}%'.format(scores_[i] * 100),
                          color=color_table[labels_[i]])
         # cv2.imshow('Detection result', img_ori)
-        # cv2.imwrite('./test_eval/' + name + '_eval.jpg', img_ori)
         # cv2.waitKey(0)
+        cv2.imwrite(base_path + '/test_eval/' + name + '_eval.jpg', img_ori)
 
-    with open("./predicted.txt", "w") as file:
+    with open(base_path + "predicted.txt", "w") as file:
         file.write(results)
