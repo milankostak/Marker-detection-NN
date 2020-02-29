@@ -30,6 +30,10 @@ if not os.path.exists(valFolder):
 if not os.path.exists(testFolder):
     os.mkdir(testFolder)
 
+test_txt = ""
+train_txt = ""
+val_txt = ""
+
 counter = 0
 for file in files:
     name = f'{counter:04d}'
@@ -46,6 +50,7 @@ for file in files:
     source = cv2.imread(newFile)
 
     imgH, imgW, channels = source.shape
+    data = []
 
     if mode == "rectangle":
         width = random.randint(5, 60)
@@ -56,6 +61,7 @@ for file in files:
 
         cv2.rectangle(source, (x, y), (x + width, y + height), color, -1)
         print(counter, os.path.abspath(newFile), imgW, imgH, 0, x, y, x + width, y + height)
+        data = [counter, os.path.abspath(newFile), imgW, imgH, 0, x, y, x + width, y + height]
 
     elif mode == "triangle_empty":
         wh = random.randint(15, 60)
@@ -69,6 +75,27 @@ for file in files:
         cv2.line(source, (x, y + wh), (int(x + wh / 2), y), color, thickness)  # left line
         cv2.line(source, (x + wh, y + wh), (int(x + wh / 2), y), color, thickness)  # right line
         print(counter, os.path.abspath(newFile), imgW, imgH, 0, x, y, x + wh, y + wh)
+        data = [counter, os.path.abspath(newFile), imgW, imgH, 0, x, y, x + wh, y + wh]
+
+    row = ' '.join(str(e) for e in data)
+    if counter % 10 < 7:  # <0;6>
+        train_txt += row + "\n"
+    elif counter % 10 < 9:
+        val_txt += row + "\n"
+    else:
+        test_txt += row + "\n"
 
     cv2.imwrite(newFile, source)
     counter += 1
+
+file = open(folder + "train.txt", "w")
+file.write(train_txt)
+file.close()
+
+file = open(folder + "val.txt", "w")
+file.write(val_txt)
+file.close()
+
+file = open(folder + "test.txt", "w")
+file.write(test_txt)
+file.close()
