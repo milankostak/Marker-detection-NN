@@ -14,9 +14,9 @@ files2019 = glob.glob("..../*.jpg")
 mode = "triangle_empty"
 
 files = files2015 + files2016 + files2017 + files2018 + files2019
-print("Total images count: ", files.__len__())
+print("Total images count:", files.__len__())
 
-folder = "D:/Python/PycharmProjects/images/"
+folder = "D:/Python/PycharmProjects/" + mode + "/"
 trainFolder = folder + "train/"
 valFolder = folder + "val/"
 testFolder = folder + "test/"
@@ -36,6 +36,7 @@ val_txt = ""
 
 counter = 0
 for file in files:
+    print(counter)
     name = f'{counter:04d}'
 
     newFile = ""
@@ -70,11 +71,9 @@ for file in files:
         color = (0, 200, 0)
         thickness = 2
 
-        # draw triangle
         cv2.line(source, (x, y + wh), (x + wh, y + wh), color, thickness)  # bottom line
         cv2.line(source, (x, y + wh), (int(x + wh / 2), y), color, thickness)  # left line
         cv2.line(source, (x + wh, y + wh), (int(x + wh / 2), y), color, thickness)  # right line
-        print(counter, os.path.abspath(newFile), imgW, imgH, 0, x, y, x + wh, y + wh)
         data = [counter, os.path.abspath(newFile), imgW, imgH, 0, x, y, x + wh, y + wh]
 
     row = ' '.join(str(e) for e in data)

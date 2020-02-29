@@ -8,14 +8,14 @@ import math
 
 ### Some paths
 base_path = 'D:/Python/PycharmProjects/images/'
-train_file = base_path + '/train.txt'  # The path of the training txt file.
-val_file = base_path + '/val.txt'  # The path of the validation txt file.
+train_file = base_path + 'train.txt'  # The path of the training txt file.
+val_file = base_path + 'val.txt'  # The path of the validation txt file.
 restore_path = './data/darknet_weights/yolov3.ckpt'  # The path of the weights to restore.
-save_dir = './checkpoint/'  # The directory of the weights to save.
+save_dir = base_path + 'checkpoint/'  # The directory of the weights to save.
 log_dir = './data/logs/'  # The directory to store the tensorboard log files.
-progress_log_path = './data/progress.log'  # The path to record the training progress.
-anchor_path = base_path + '/marker_anchors.txt'  # The path of the anchor txt file.
-class_name_path = base_path + '/data.names'  # The path of the class names.
+progress_log_path = base_path + 'progress.log'  # The path to record the training progress.
+anchor_path = base_path + 'marker_anchors.txt'  # The path of the anchor txt file.
+class_name_path = base_path + 'data.names'  # The path of the class names.
 
 ### Training releated numbers
 batch_size = 6
@@ -50,10 +50,10 @@ pw_values = [learning_rate_init, 3e-5, 1e-5]
 # restore_include: None, restore_exclude: None  => restore the whole model
 # restore_include: None, restore_exclude: scope  => restore the whole model except `scope`
 # restore_include: scope1, restore_exclude: scope2  => if scope1 contains scope2, restore scope1 and not restore scope2 (scope1 - scope2)
-# choise 1: only restore the darknet body
+# choice 1: only restore the darknet body
 # restore_include = ['yolov3/darknet53_body']
 # restore_exclude = None
-# choise 2: restore all layers except the last 3 conv2d layers in 3 scale
+# choice 2: restore all layers except the last 3 conv2d layers in 3 scale
 restore_include = None
 restore_exclude = ['yolov3/yolov3_head/Conv_14', 'yolov3/yolov3_head/Conv_6', 'yolov3/yolov3_head/Conv_22']
 # Choose the parts you want to finetune. List form.
@@ -62,11 +62,11 @@ update_part = ['yolov3/yolov3_head']
 
 ### other training strategies
 multi_scale_train = True  # Whether to apply multi-scale training strategy. Image size varies from [320, 320] to [640, 640] by default.
-use_label_smooth = True # Whether to use class label smoothing strategy.
+use_label_smooth = True  # Whether to use class label smoothing strategy.
 use_focal_loss = True  # Whether to apply focal loss on the conf loss.
 use_mix_up = True  # Whether to use mix up data augmentation strategy. 
 use_warm_up = True  # whether to use warm up strategy to prevent from gradient exploding.
-warm_up_epoch = 3  # Warm up training epoches. Set to a larger value if gradient explodes.
+warm_up_epoch = 3  # Warm up training epochs. Set to a larger value if gradient explodes.
 
 ### some constants in validation
 # nms
