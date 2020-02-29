@@ -96,18 +96,14 @@ for file in files:
     cv2.imwrite(newFile, source)
     counter += 1
 
-file = open(folder + "train.txt", "w")
-file.write(train_txt)
-file.close()
+with open(folder + "train.txt", "w") as file:
+    file.write(train_txt)
 
-file = open(folder + "val.txt", "w")
-file.write(val_txt)
-file.close()
+with open(folder + "val.txt", "w") as file:
+    file.write(val_txt)
 
-file = open(folder + "test.txt", "w")
-file.write(test_txt)
-file.close()
+with open(folder + "test.txt", "w") as file:
+    file.write(test_txt)
 
-file = open(folder + "data.names", "w")
-file.write("marker")
-file.close()
+with open(folder + "data.names", "w") as file:
+    file.write("marker")

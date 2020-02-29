@@ -5,6 +5,7 @@ from __future__ import division, print_function
 
 from YOLOv3.utils.misc_utils import parse_anchors, read_class_names
 import math
+import os.path
 
 ### Some paths
 base_path = 'D:/Python/PycharmProjects/images/'
@@ -78,7 +79,10 @@ eval_threshold = 0.5  # the iou threshold applied in mAP evaluation
 use_voc_07_metric = False  # whether to use voc 2007 evaluation metric, i.e. the 11-point metric
 
 ### parse some params
-anchors = parse_anchors(anchor_path)
+if os.path.exists(anchor_path):
+    anchors = parse_anchors(anchor_path)
+else:
+    print("Anchors file not found!")
 classes = read_class_names(class_name_path)
 class_num = len(classes)
 train_img_cnt = len(open(train_file, 'r').readlines())
