@@ -146,3 +146,6 @@ with open(folder + "test.txt", "w") as file:
 
 with open(folder + "data.names", "w") as file:
     file.write("marker")
+
+with open(folder + "marker_anchors.txt", "w") as file:
+    file.write("")
