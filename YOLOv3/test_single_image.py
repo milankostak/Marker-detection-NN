@@ -4,11 +4,11 @@ from __future__ import division, print_function
 
 import tensorflow as tf
 import numpy as np
-import argparse
 import cv2
 import glob
 import os
 
+from YOLOv3.utils.simple_object import SimpleObject
 from YOLOv3.utils.misc_utils import parse_anchors, read_class_names
 from YOLOv3.utils.nms_utils import gpu_nms
 from YOLOv3.utils.plot_utils import get_color_table, plot_one_box
@@ -16,25 +16,19 @@ from YOLOv3.utils.data_aug import letterbox_resize
 
 from YOLOv3.model import yolov3
 
-#################
-# ArgumentParser
-#################
-parser = argparse.ArgumentParser(description="YOLO-V3 test single image test procedure.")
-
 base_path = 'D:/Python/PycharmProjects/images/'
-parser.add_argument("--input_image", type=str, default="todo",
-                    help="The path of the input image.")
-parser.add_argument("--anchor_path", type=str, default=base_path + "marker_anchors.txt",
-                    help="The path of the anchor txt file.")
-parser.add_argument("--new_size", nargs='*', type=int, default=[416, 416],
-                    help="Resize the input image with `new_size`, size format: [width, height]")
-parser.add_argument("--letterbox_resize", type=lambda x: (str(x).lower() == 'true'), default=True,
-                    help="Whether to use the letterbox resize.")
-parser.add_argument("--class_name_path", type=str, default=base_path + "data.names",
-                    help="The path of the class names.")
-parser.add_argument("--restore_path", type=str, default="./data/darknet_weights/yolov3.ckpt",
-                    help="The path of the weights to restore.")
-args = parser.parse_args()
+
+args = SimpleObject()
+# The path of the anchor txt file.
+args.anchor_path = base_path + "marker_anchors.txt"
+# Resize the input image with `new_size`, size format: [width, height]
+args.new_size = [416, 416]
+# Whether to use the letterbox resize.
+args.letterbox_resize = True
+# The path of the class names.
+args.class_name_path = base_path + "data.names"
+# The path of the weights to restore.
+args.restore_path = "./data/darknet_weights/yolov3.ckpt"
 
 args.anchors = parse_anchors(args.anchor_path)
 args.classes = read_class_names(args.class_name_path)
