@@ -15,6 +15,10 @@ files2019 = glob.glob("..../*.jpg")
 # mode = "rectangle_empty"
 mode = "triangle_filled"
 # mode = "triangle_empty"
+# mode = "star"
+# mode = "star_th1"
+# mode = "star_th1_in_rectangle"
+# mode = "at_sign"
 
 files = files2015 + files2016 + files2017 + files2018 + files2019
 print("Total images count:", files.__len__())
@@ -55,8 +59,11 @@ for file in files:
 
     imgH, imgW, channels = source.shape
 
-    width = random.randint(5, 60)
-    height = random.randint(6, 50)
+    if mode == "at_sign":
+        width = height = random.randint(15, 45)
+    else:
+        width = random.randint(5, 60)
+        height = random.randint(6, 50)
     x = random.randint(1, imgW - width - 1)
     y = random.randint(1, imgH - height - 1)
     color = (0, 200, 0)
@@ -84,6 +91,38 @@ for file in files:
             cv2.line(source, pt0, pt1, color, thickness)  # left line
             cv2.line(source, pt0, pt2, color, thickness)  # right line
             cv2.line(source, pt1, pt2, color, thickness)  # bottom line
+
+    elif mode == "star" or mode == "star_th1" or mode == "star_th1_in_rectangle":
+        if mode == "star_th1" or mode == "star_th1_in_rectangle":
+            thickness = 1
+        # x += 1
+        # y += 1
+        # width -= 2
+        # height -= 2
+        # left top to right bottom
+        cv2.line(source, (x, y), (x + width, y + height), color, thickness)
+        # middle - top to bottom
+        x2 = int(x + width / 2)
+        cv2.line(source, (x2, y), (x2, y + height), color, thickness)
+        # right top to left bottom
+        cv2.line(source, (x + width, y), (x, y + height), color, thickness)
+        # middle - left to right
+        y2 = int(y + height / 2)
+        cv2.line(source, (x, y2), (x + width, y2), color, thickness)
+        if mode == "star_th1_in_rectangle":
+            cv2.line(source, (x, y), (x + width, y), color, thickness)  # top line
+            cv2.line(source, (x, y + height), (x + width, y + height), color, thickness)  # bottom line
+            cv2.line(source, (x, y), (x, y + height), color, thickness)  # left line
+            cv2.line(source, (x + width, y), (x + width, y + height), color, thickness)  # right line
+
+    elif mode == "at_sign":
+        font_scale = width / 23
+        cv2.putText(source, "@", (x - 2, y - 1 + height), cv2.FONT_HERSHEY_COMPLEX, font_scale, color)
+        # thickness = 1
+        # cv2.line(source, (x, y), (x + width, y), color, thickness)  # top line
+        # cv2.line(source, (x, y + height), (x + width, y + height), color, thickness)  # bottom line
+        # cv2.line(source, (x, y), (x, y + height), color, thickness)  # left line
+        # cv2.line(source, (x + width, y), (x + width, y + height), color, thickness)  # right line
 
     row = ' '.join(str(e) for e in data)
     if counter % 10 < 7:  # <0;6>
