@@ -16,8 +16,10 @@ files2019 = glob.glob("..../*.jpg")
 mode = "triangle_filled"
 # mode = "triangle_empty"
 # mode = "star"
+# mode = "star_in_filled_rect"
 # mode = "star_th1"
 # mode = "star_th1_in_rectangle"
+# mode = "star_th1_in_filled_rect"
 # mode = "at_sign"
 
 files = files2015 + files2016 + files2017 + files2018 + files2019
@@ -92,13 +94,17 @@ for file in files:
             cv2.line(source, pt0, pt2, color, thickness)  # right line
             cv2.line(source, pt1, pt2, color, thickness)  # bottom line
 
-    elif mode == "star" or mode == "star_th1" or mode == "star_th1_in_rectangle":
-        if mode == "star_th1" or mode == "star_th1_in_rectangle":
+    elif "star" in mode:
+        if "th1" in mode:
             thickness = 1
+        if "filled_rect" in mode:
+            cv2.rectangle(source, (x, y), (x + width, y + height), color, -1)
+            color = (200, 0, 0)
         # x += 1
         # y += 1
         # width -= 2
         # height -= 2
+
         # left top to right bottom
         cv2.line(source, (x, y), (x + width, y + height), color, thickness)
         # middle - top to bottom
@@ -109,6 +115,7 @@ for file in files:
         # middle - left to right
         y2 = int(y + height / 2)
         cv2.line(source, (x, y2), (x + width, y2), color, thickness)
+
         if mode == "star_th1_in_rectangle":
             cv2.line(source, (x, y), (x + width, y), color, thickness)  # top line
             cv2.line(source, (x, y + height), (x + width, y + height), color, thickness)  # bottom line
