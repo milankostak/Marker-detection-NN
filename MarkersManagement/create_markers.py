@@ -20,6 +20,8 @@ mode = "triangle_filled"
 # mode = "star_th1"
 # mode = "star_th1_in_rectangle"
 # mode = "star_th1_in_filled_rect"
+# mode = "cross_in_filled_rect"
+# mode = "cross_th1_in_filled_rect"
 # mode = "at_sign"
 
 files = files2015 + files2016 + files2017 + files2018 + files2019
@@ -121,6 +123,16 @@ for file in files:
             cv2.line(source, (x, y + height), (x + width, y + height), color, thickness)  # bottom line
             cv2.line(source, (x, y), (x, y + height), color, thickness)  # left line
             cv2.line(source, (x + width, y), (x + width, y + height), color, thickness)  # right line
+
+    elif "cross" in mode:
+        if "th1" in mode:
+            thickness = 1
+        cv2.rectangle(source, (x, y), (x + width, y + height), color, -1)
+        color = (200, 0, 0)
+        # left top to right bottom
+        cv2.line(source, (x, y), (x + width, y + height), color, thickness)
+        # right top to left bottom
+        cv2.line(source, (x + width, y), (x, y + height), color, thickness)
 
     elif mode == "at_sign":
         font_scale = width / 23
