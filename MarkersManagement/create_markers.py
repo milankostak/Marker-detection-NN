@@ -21,7 +21,9 @@ mode = "triangle_filled"
 # mode = "star_th1_in_rectangle"
 # mode = "star_th1_in_filled_rect"
 # mode = "cross_in_filled_rect"
+# mode = "cross_in_filled_rect_color"
 # mode = "cross_th1_in_filled_rect"
+# mode = "cross_th1_in_filled_rect_color"
 # mode = "at_sign"
 
 files = files2015 + files2016 + files2017 + files2018 + files2019
@@ -125,14 +127,33 @@ for file in files:
             cv2.line(source, (x + width, y), (x + width, y + height), color, thickness)  # right line
 
     elif "cross" in mode:
+        color2 = (200, 0, 0)
+        if "color" in mode:
+            a = random.randint(1, 3)
+            b = random.randint(200, 255)
+            g = random.randint(200, 255)
+            r = random.randint(200, 255)
+            if a == 1:
+                color = (0, g, r)
+            elif a == 2:
+                color = (b, 0, r)
+            else:
+                color = (b, g, 0)
+
+            a = random.randint(1, 3)
+            if a == 1:
+                color2 = (b, 0, 0)
+            elif a == 2:
+                color2 = (0, g, 0)
+            else:
+                color2 = (0, 0, r)
         if "th1" in mode:
             thickness = 1
         cv2.rectangle(source, (x, y), (x + width, y + height), color, -1)
-        color = (200, 0, 0)
         # left top to right bottom
-        cv2.line(source, (x, y), (x + width, y + height), color, thickness)
+        cv2.line(source, (x, y), (x + width, y + height), color2, thickness)
         # right top to left bottom
-        cv2.line(source, (x + width, y), (x, y + height), color, thickness)
+        cv2.line(source, (x + width, y), (x, y + height), color2, thickness)
 
     elif mode == "at_sign":
         font_scale = width / 23
