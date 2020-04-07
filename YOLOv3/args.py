@@ -18,7 +18,7 @@ progress_log_path = base_path + 'progress.log'  # The path to record the trainin
 anchor_path = base_path + 'marker_anchors.txt'  # The path of the anchor txt file.
 class_name_path = base_path + 'data.names'  # The path of the class names.
 
-### Training releated numbers
+### Training related numbers
 batch_size = 6
 img_size = [416, 416]  # Images will be resized to `img_size` and fed to the network, size format: [width, height]
 letterbox_resize = True  # Whether to use the letterbox resize, i.e., keep the original aspect ratio in the resized image.
@@ -79,10 +79,10 @@ eval_threshold = 0.5  # the iou threshold applied in mAP evaluation
 use_voc_07_metric = False  # whether to use voc 2007 evaluation metric, i.e. the 11-point metric
 
 ### parse some params
-if os.path.exists(anchor_path):
+if os.path.exists(anchor_path) and os.stat(anchor_path).st_size > 0:
     anchors = parse_anchors(anchor_path)
 else:
-    print("Anchors file not found!")
+    print("Anchors file not found or empty!")
 classes = read_class_names(class_name_path)
 class_num = len(classes)
 train_img_cnt = len(open(train_file, 'r').readlines())

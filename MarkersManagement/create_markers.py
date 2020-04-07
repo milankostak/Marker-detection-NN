@@ -27,7 +27,7 @@ mode = "triangle_filled"
 # mode = "at_sign"
 
 files = files2015 + files2016 + files2017 + files2018 + files2019
-print("Total images count:", files.__len__())
+print("Total images count:", len(files))
 
 folder = "D:/Python/PycharmProjects/" + mode + "/"
 trainFolder = folder + "train/"

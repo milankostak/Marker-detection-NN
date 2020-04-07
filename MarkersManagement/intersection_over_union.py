@@ -53,6 +53,7 @@ for i in range(count):
             possible_iou = bb_intersection_over_union(gt_box, pred_box)
             if possible_iou < false_positive_threshold:
                 false_positive_count += 1
+                # print(pred_line)
             possible_ious.append(possible_iou)
 
     if len(possible_ious) != 0:
@@ -61,7 +62,7 @@ for i in range(count):
         # this means they are all false positive and not found marker is a false negative
         if max_iou < false_positive_threshold:
             false_negative_count += 1
-            print(pred_line)
+            # print(pred_line)
     else:
         max_iou = 0
         # no marker found in the image, but every image has 1 marker
@@ -70,7 +71,8 @@ for i in range(count):
     print(pred_line[0], max_iou)
     all_ious.append(max_iou)
 
-result = np.array(all_ious).mean()
-print(result)
+# median = np.median(all_ious)
+mean = np.mean(all_ious)
+print(mean)
 print("false positive:", false_positive_count)
 print("false negative:", false_negative_count)
