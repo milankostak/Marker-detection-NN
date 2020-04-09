@@ -13,6 +13,7 @@ train_file = base_path + 'train.txt'  # The path of the training txt file.
 val_file = base_path + 'val.txt'  # The path of the validation txt file.
 restore_path = './data/darknet_weights/yolov3.ckpt'  # The path of the weights to restore.
 save_dir = base_path + 'checkpoint/'  # The directory of the weights to save.
+# restore_path = save_dir + 'best_model_Epoch_15_step_9087_mAP_0.9784_loss_0.3501_lr_0.0001'
 log_dir = './data/logs/'  # The directory to store the tensorboard log files.
 progress_log_path = base_path + 'progress.log'  # The path to record the training progress.
 anchor_path = base_path + 'marker_anchors.txt'  # The path of the anchor txt file.
