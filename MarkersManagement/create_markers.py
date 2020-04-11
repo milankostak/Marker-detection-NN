@@ -5,11 +5,8 @@ import random
 import shutil
 import numpy as np
 
-files2015 = glob.glob("..../*.jpg")
-files2016 = glob.glob("..../*.jpg")
-files2017 = glob.glob("..../*.jpg")
-files2018 = glob.glob("..../*.jpg")
-files2019 = glob.glob("..../*.jpg")
+files = glob.glob("./images/*.jpg")
+print("Total images count:", len(files))
 
 # mode = "rectangle_filled"
 # mode = "rectangle_empty"
@@ -25,9 +22,6 @@ mode = "triangle_filled"
 # mode = "cross_th1_in_filled_rect"
 # mode = "cross_th1_in_filled_rect_color"
 # mode = "at_sign"
-
-files = files2015 + files2016 + files2017 + files2018 + files2019
-print("Total images count:", len(files))
 
 folder = "D:/Python/PycharmProjects/" + mode + "/"
 trainFolder = folder + "train/"
