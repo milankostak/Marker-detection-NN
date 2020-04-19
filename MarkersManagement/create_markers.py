@@ -10,7 +10,7 @@ print("Total images count:", len(files))
 
 # mode = "rectangle_filled"
 # mode = "rectangle_empty"
-mode = "triangle_filled"
+# mode = "triangle_filled"
 # mode = "triangle_empty"
 # mode = "star"
 # mode = "star_in_filled_rect"
@@ -22,6 +22,8 @@ mode = "triangle_filled"
 # mode = "cross_th1_in_filled_rect"
 # mode = "cross_th1_in_filled_rect_color"
 # mode = "at_sign"
+mode = "T_cross_th2"
+# mode = "T_cross_th1"
 
 folder = "D:/Python/PycharmProjects/" + mode + "/"
 trainFolder = folder + "train/"
@@ -143,11 +145,33 @@ for file in files:
                 color2 = (0, 0, r)
         if "th1" in mode:
             thickness = 1
+
         cv2.rectangle(source, (x, y), (x + width, y + height), color, -1)
-        # left top to right bottom
-        cv2.line(source, (x, y), (x + width, y + height), color2, thickness)
-        # right top to left bottom
-        cv2.line(source, (x + width, y), (x, y + height), color2, thickness)
+        if "T" not in mode:
+            # left top to right bottom
+            cv2.line(source, (x, y), (x + width, y + height), color2, thickness)
+            # right top to left bottom
+            cv2.line(source, (x + width, y), (x, y + height), color2, thickness)
+        else:
+            a = random.randint(1, 4)
+            if a <= 2:
+                # left top to right bottom
+                cv2.line(source, (x, y), (x + width, y + height), color2, thickness)
+                if a == 1:
+                    # right top to center
+                    cv2.line(source, (x + width, y), (x + int(width / 2), y + int(height / 2)), color2, thickness)
+                else:
+                    # center to left bottom
+                    cv2.line(source, (x + int(width / 2), y + int(height / 2)), (x, y + height), color2, thickness)
+            else:
+                # right top to left bottom
+                cv2.line(source, (x + width, y), (x, y + height), color2, thickness)
+                if a == 3:
+                    # left top to center
+                    cv2.line(source, (x, y), (x + int(width / 2), y + int(height / 2)), color2, thickness)
+                else:
+                    # center to right bottom
+                    cv2.line(source, (x + int(width / 2), y + int(height / 2)), (x + width, y + height), color2, thickness)
 
     elif mode == "at_sign":
         font_scale = width / 23
