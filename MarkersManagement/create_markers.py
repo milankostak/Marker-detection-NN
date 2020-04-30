@@ -4,6 +4,7 @@ import glob
 import random
 import shutil
 import numpy as np
+import math
 
 files = glob.glob("./images/*.jpg")
 print("Total images count:", len(files))
@@ -44,10 +45,14 @@ test_txt = ""
 train_txt = ""
 val_txt = ""
 
+file_format_length = 4
+if len(files) >= 10_000:
+    file_format_length = int(math.log10(len(files))) + 1
+
 counter = 0
 for file in files:
     print(counter)
-    name = f'{counter:04d}'
+    name = f'{counter:0{file_format_length}d}'
 
     newFile = ""
     if counter % 10 < 7:  # <0;6>
