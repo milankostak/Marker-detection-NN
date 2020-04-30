@@ -22,8 +22,9 @@ print("Total images count:", len(files))
 # mode = "cross_th1_in_filled_rect"
 # mode = "cross_th1_in_filled_rect_color"
 # mode = "at_sign"
-mode = "T_cross_th2"
+# mode = "T_cross_th2"
 # mode = "T_cross_th1"
+mode = "T_cross"
 
 folder = "D:/Python/PycharmProjects/" + mode + "/"
 trainFolder = folder + "train/"
@@ -145,6 +146,10 @@ for file in files:
                 color2 = (0, 0, r)
         if "th1" in mode:
             thickness = 1
+        elif "th2" in mode:
+            thickness = 2
+        else:
+            thickness = random.randint(1, 2)
 
         cv2.rectangle(source, (x, y), (x + width, y + height), color, -1)
         if "T" not in mode:
