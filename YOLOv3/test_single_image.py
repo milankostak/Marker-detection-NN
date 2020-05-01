@@ -68,7 +68,7 @@ with tf.Session() as sess:
 
     for test_image in test_images:
         img_ori = cv2.imread(test_image)
-        name = test_image[-8:-4]
+        name = os.path.splitext(os.path.basename(test_image))[0]  # get the filename without extension
         if args.letterbox_resize:
             img, resize_ratio, dw, dh = letterbox_resize(img_ori, args.new_size[0], args.new_size[1])
         else:
