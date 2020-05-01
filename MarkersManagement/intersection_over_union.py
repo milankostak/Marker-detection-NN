@@ -30,6 +30,7 @@ with open(base_path + 'test.txt') as file:
 
 with open(base_path + 'predicted.txt') as file:
     pred_lines = [line.rstrip() for line in file]
+pred_lines.sort(key=lambda x: int(x.split(" ")[0]))
 
 all_ious = list()
 false_positive_count = 0
