@@ -115,7 +115,7 @@ with tf.control_dependencies(update_ops):
     train_op = optimizer.apply_gradients(clip_grad_var, global_step=global_step)
 
 if args.save_optimizer:
-    print('Saving optimizer parameters to checkpoint! Remember to restore the global_step in the fine-tuning afterwards.')
+    print('Saving optimizer parameters to the checkpoint! Remember to restore the global_step in the fine-tuning afterward.')
     saver_to_save = tf.train.Saver()
     saver_best = tf.train.Saver()
 
@@ -163,7 +163,7 @@ with tf.Session() as sess:
                 if np.isnan(loss_total.average):
                     print('****' * 10)
                     raise ArithmeticError(
-                        'Gradient exploded! Please train again and you may need modify some parameters.')
+                        'Gradient exploded! Please train again, and you may need to modify some parameters.')
 
         # NOTE: this is just demo. You can set the conditions when to save the weights.
         if epoch % args.save_epoch == 0 and epoch > 0:
