@@ -1,56 +1,49 @@
-# coding: utf-8
-
 from __future__ import division, print_function
-
-import argparse
 
 import tensorflow as tf
 from tqdm import trange
 
-from YOLOv3.model import yolov3
+from YOLOv3.utils.simple_object import SimpleObject
 from YOLOv3.utils.data_utils import get_batch_data
 from YOLOv3.utils.eval_utils import get_preds_gpu, voc_eval, parse_gt_rec
 from YOLOv3.utils.misc_utils import parse_anchors, read_class_names, AverageMeter
 from YOLOv3.utils.nms_utils import gpu_nms
 
-#################
-# ArgumentParser
-#################
-parser = argparse.ArgumentParser(description="YOLO-V3 eval procedure.")
+from YOLOv3.model import yolov3
 
 base_path = 'D:/Python/PycharmProjects/images/'
-parser.add_argument("--eval_file", type=str, default=base_path + "/test.txt",
-                    help="The path of the validation or test txt file.")
-parser.add_argument("--restore_path", type=str, default="./data/darknet_weights/yolov3.ckpt",
-                    help="The path of the weights to restore.")
-parser.add_argument("--anchor_path", type=str, default=base_path + "/marker_anchors.txt",
-                    help="The path of the anchor txt file.")
-parser.add_argument("--class_name_path", type=str, default=base_path + "/data.names",
-                    help="The path of the class names.")
-# some numbers
-parser.add_argument("--img_size", nargs='*', type=int, default=[416, 416],
-                    help="Resize the input image to `img_size`, size format: [width, height]")
-parser.add_argument("--letterbox_resize", type=lambda x: (str(x).lower() == 'true'), default=False,
-                    help="Whether to use the letterbox resize, i.e., keep the original image aspect ratio.")
-parser.add_argument("--num_threads", type=int, default=10,
-                    help="Number of threads for image processing used in tf.data pipeline.")
-parser.add_argument("--prefetech_buffer", type=int, default=5,
-                    help="Prefetech_buffer used in tf.data pipeline.")
-parser.add_argument("--nms_threshold", type=float, default=0.45,
-                    help="IOU threshold in nms operation.")
-parser.add_argument("--score_threshold", type=float, default=0.01,
-                    help="Threshold of the probability of the classes in nms operation.")
-parser.add_argument("--nms_topk", type=int, default=400,
-                    help="Keep at most nms_topk outputs after nms.")
-parser.add_argument("--use_voc_07_metric", type=lambda x: (str(x).lower() == 'true'), default=False,
-                    help="Whether to use the voc 2007 mAP metrics.")
-args = parser.parse_args()
+
+args = SimpleObject()
+# The path of the anchor txt file.
+args.anchor_path = base_path + "marker_anchors.txt"
+# Resize the input image with `new_size`, size format: [width, height]
+args.img_size = [416, 416]
+# Whether to use the letterbox resize.
+args.letterbox_resize = True
+# The path of the class names.
+args.class_name_path = base_path + "data.names"
+# The path of the weights to restore.
+args.restore_path = "./data/darknet_weights/yolov3.ckpt"
+# The path of the validation or test txt file.
+args.val_file = base_path + "val.txt"
+# Number of threads for image processing used in tf.data pipeline.
+args.num_threads = 10
+# Prefetech_buffer used in tf.data pipeline.
+args.prefetech_buffer = 5
+# IOU threshold in nms operation.
+args.nms_threshold = 0.45
+# Threshold of the probability of the classes in nms operation.
+args.score_threshold = 0.01
+# Keep at most nms_topk outputs after nms.
+args.nms_topk = 400
+# Whether to use the voc 2007 mAP metrics.
+args.use_voc_07_metric = False
 
 # args params
 args.anchors = parse_anchors(args.anchor_path)
 args.classes = read_class_names(args.class_name_path)
 args.class_num = len(args.classes)
-args.img_cnt = len(open(args.eval_file, 'r').readlines())
+args.val_img_cnt = len(open(args.val_file, 'r').readlines())
 
 # setting placeholders
 is_training = tf.placeholder(dtype=tf.bool, name="phase_train")
@@ -63,7 +56,7 @@ gpu_nms_op = gpu_nms(pred_boxes_flag, pred_scores_flag, args.class_num, args.nms
 ##################
 # tf.data pipeline
 ##################
-val_dataset = tf.data.TextLineDataset(args.eval_file)
+val_dataset = tf.data.TextLineDataset(args.val_file)
 val_dataset = val_dataset.batch(1)
 val_dataset = val_dataset.map(
     lambda x: tf.py_func(get_batch_data,
@@ -102,7 +95,7 @@ with tf.Session() as sess:
         AverageMeter(), AverageMeter(), AverageMeter(), AverageMeter(), AverageMeter()
     val_preds = []
 
-    for j in trange(args.img_cnt):
+    for j in trange(args.val_img_cnt):
         __image_ids, __y_pred, __loss = sess.run([image_ids, y_pred, loss], feed_dict={is_training: False})
         pred_content = get_preds_gpu(sess, gpu_nms_op, pred_boxes_flag, pred_scores_flag, __image_ids, __y_pred)
 
@@ -113,8 +106,9 @@ with tf.Session() as sess:
         val_loss_conf.update(__loss[3])
         val_loss_class.update(__loss[4])
 
+    # calc mAP
     rec_total, prec_total, ap_total = AverageMeter(), AverageMeter(), AverageMeter()
-    gt_dict = parse_gt_rec(args.eval_file, args.img_size, args.letterbox_resize)
+    gt_dict = parse_gt_rec(args.val_file, args.img_size, args.letterbox_resize)
     print('mAP eval:')
     for ii in range(args.class_num):
         npos, nd, rec, prec, ap = voc_eval(gt_dict, val_preds, ii, iou_thres=0.5, use_07_metric=args.use_voc_07_metric)
@@ -125,7 +119,7 @@ with tf.Session() as sess:
 
     mAP = ap_total.average
     print('final mAP: {:.4f}'.format(mAP))
-    print("recall: {:.3f}, precision: {:.3f}".format(rec_total.average, prec_total.average))
+    print("recall: {:.4f}, precision: {:.4f}".format(rec_total.average, prec_total.average))
     print("total_loss: {:.3f}, loss_xy: {:.3f}, loss_wh: {:.3f}, loss_conf: {:.3f}, loss_class: {:.3f}".format(
         val_loss_total.average, val_loss_xy.average, val_loss_wh.average, val_loss_conf.average, val_loss_class.average
     ))
