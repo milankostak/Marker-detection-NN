@@ -2,9 +2,9 @@
 
 from __future__ import division, print_function
 
-import numpy as np
 import tensorflow as tf
 slim = tf.contrib.slim
+
 
 def conv2d(inputs, filters, kernel_size, strides=1):
     def _fixed_padding(inputs, kernel_size):
@@ -20,6 +20,7 @@ def conv2d(inputs, filters, kernel_size, strides=1):
     inputs = slim.conv2d(inputs, filters, kernel_size, stride=strides,
                          padding=('SAME' if strides == 1 else 'VALID'))
     return inputs
+
 
 def darknet53_body(inputs):
     def res_block(inputs, filters):

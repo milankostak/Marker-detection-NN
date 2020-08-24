@@ -3,7 +3,6 @@
 from __future__ import division, print_function
 
 import numpy as np
-import cv2
 from collections import Counter
 
 from YOLOv3.utils.nms_utils import cpu_nms, gpu_nms
@@ -11,12 +10,12 @@ from YOLOv3.utils.data_utils import parse_line
 
 
 def calc_iou(pred_boxes, true_boxes):
-    '''
+    """
     Maintain an efficient way to calculate the ios matrix using the numpy broadcast tricks.
     shape_info: pred_boxes: [N, 4]
                 true_boxes: [V, 4]
     return: IoU matrix: shape: [N, V]
-    '''
+    """
 
     # [N, 1, 4]
     pred_boxes = np.expand_dims(pred_boxes, -2)
@@ -46,10 +45,9 @@ def calc_iou(pred_boxes, true_boxes):
 
 
 def evaluate_on_cpu(y_pred, y_true, num_classes, calc_now=True, max_boxes=50, score_thresh=0.5, iou_thresh=0.5):
-    '''
+    """
     Given y_pred and y_true of a batch of data, get the recall and precision of the current batch.
-    '''
-
+    """
     num_images = y_true[0].shape[0]
     true_labels_dict = {i: 0 for i in range(num_classes)}  # {class: count}
     pred_labels_dict = {i: 0 for i in range(num_classes)}
@@ -140,11 +138,10 @@ def evaluate_on_cpu(y_pred, y_true, num_classes, calc_now=True, max_boxes=50, sc
 
 
 def evaluate_on_gpu(sess, gpu_nms_op, pred_boxes_flag, pred_scores_flag, y_pred, y_true, num_classes, iou_thresh=0.5, calc_now=True):
-    '''
+    """
     Given y_pred and y_true of a batch of data, get the recall and precision of the current batch.
     This function will perform gpu operation on the GPU.
-    '''
-
+    """
     num_images = y_true[0].shape[0]
     true_labels_dict = {i: 0 for i in range(num_classes)}  # {class: count}
     pred_labels_dict = {i: 0 for i in range(num_classes)}
@@ -235,11 +232,11 @@ def evaluate_on_gpu(sess, gpu_nms_op, pred_boxes_flag, pred_scores_flag, y_pred,
 
 
 def get_preds_gpu(sess, gpu_nms_op, pred_boxes_flag, pred_scores_flag, image_ids, y_pred):
-    '''
+    """
     Given the y_pred of an input image, get the predicted bbox and label info.
     return:
         pred_content: 2d list.
-    '''
+    """
     image_id = image_ids[0]
 
     # keep the first dimension 1
@@ -263,11 +260,11 @@ def get_preds_gpu(sess, gpu_nms_op, pred_boxes_flag, pred_scores_flag, image_ids
 
 gt_dict = {}  # key: img_id, value: gt object list
 def parse_gt_rec(gt_filename, target_img_size, letterbox_resize=True):
-    '''
+    """
     parse and re-organize the gt info.
     return:
         gt_dict: dict. Each key is a img_id, the value is the gt bboxes in the corresponding img.
-    '''
+    """
 
     global gt_dict
 
@@ -309,7 +306,8 @@ def parse_gt_rec(gt_filename, target_img_size, letterbox_resize=True):
 # The following two functions are modified from FAIR's Detectron repo to calculate mAP:
 # https://github.com/facebookresearch/Detectron/blob/master/detectron/datasets/voc_eval.py
 def voc_ap(rec, prec, use_07_metric=False):
-    """Compute VOC AP given precision and recall. If use_07_metric is true, uses
+    """
+    Compute VOC AP given precision and recall. If use_07_metric is true, uses
     the VOC 07 11-point method (default:False).
     """
     if use_07_metric:
@@ -341,9 +339,9 @@ def voc_ap(rec, prec, use_07_metric=False):
 
 
 def voc_eval(gt_dict, val_preds, classidx, iou_thres=0.5, use_07_metric=False):
-    '''
+    """
     Top level function that does the PASCAL VOC evaluation.
-    '''
+    """
     # 1.obtain gt: extract all gt objects for this class
     class_recs = {}
     npos = 0

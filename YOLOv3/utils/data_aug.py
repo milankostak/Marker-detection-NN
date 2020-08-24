@@ -10,11 +10,11 @@ import cv2
 
 
 def mix_up(img1, img2, bbox1, bbox2):
-    '''
+    """
     return:
         mix_img: HWC format mix up image
         mix_bbox: [N, 5] shape mix up bbox, i.e. `x_min, y_min, x_max, y_mix, mixup_weight`.
-    '''
+    """
     height = max(img1.shape[0], img2.shape[0])
     width = max(img1.shape[1], img2.shape[1])
 
@@ -89,6 +89,7 @@ def bbox_crop(bbox, crop_box=None, allow_outside_center=True):
     mask = np.logical_and(mask, (bbox[:, :2] < bbox[:, 2:4]).all(axis=1))
     bbox = bbox[mask]
     return bbox
+
 
 def bbox_iou(bbox_a, bbox_b, offset=0):
     """Calculate Intersection-Over-Union(IOU) of two bounding boxes.
@@ -218,11 +219,11 @@ def random_crop_with_constraints(bbox, size, min_scale=0.3, max_scale=1,
 
 
 def random_color_distort(img, brightness_delta=32, hue_vari=18, sat_vari=0.5, val_vari=0.5):
-    '''
+    """
     randomly distort image color. Adjust brightness, hue, saturation, value.
     param:
         img: a BGR uint8 format OpenCV image. HWC format.
-    '''
+    """
 
     def random_hue(img_hsv, hue_vari, p=0.5):
         if np.random.uniform(0, 1) > p:
@@ -272,9 +273,9 @@ def random_color_distort(img, brightness_delta=32, hue_vari=18, sat_vari=0.5, va
 
 
 def letterbox_resize(img, new_width, new_height, interp=0):
-    '''
+    """
     Letterbox resize. keep the original aspect ratio in the resized image.
-    '''
+    """
     ori_height, ori_width = img.shape[:2]
 
     resize_ratio = min(new_width / ori_width, new_height / ori_height)
@@ -294,10 +295,9 @@ def letterbox_resize(img, new_width, new_height, interp=0):
 
 
 def resize_with_bbox(img, bbox, new_width, new_height, interp=0, letterbox=False):
-    '''
+    """
     Resize the image and correct the bbox accordingly.
-    '''
-
+    """
     if letterbox:
         image_padded, resize_ratio, dw, dh = letterbox_resize(img, new_width, new_height, interp)
 
@@ -321,14 +321,14 @@ def resize_with_bbox(img, bbox, new_width, new_height, interp=0, letterbox=False
 
 
 def random_flip(img, bbox, px=0, py=0):
-    '''
+    """
     Randomly flip the image and correct the bbox.
     param:
     px:
         the probability of horizontal flip
     py:
         the probability of vertical flip
-    '''
+    """
     height, width = img.shape[:2]
     if np.random.uniform(0, 1) < px:
         img = cv2.flip(img, 1)
@@ -347,7 +347,7 @@ def random_flip(img, bbox, px=0, py=0):
 
 
 def random_expand(img, bbox, max_ratio=4, fill=0, keep_ratio=True):
-    '''
+    """
     Random expand original image with borders, this is identical to placing
     the original image on a larger canvas.
     param:
@@ -357,7 +357,7 @@ def random_expand(img, bbox, max_ratio=4, fill=0, keep_ratio=True):
         The value(s) for padded borders.
     keep_ratio : bool
         If `True`, will keep output image the same aspect ratio as input.
-    '''
+    """
     h, w, c = img.shape
     ratio_x = random.uniform(1, max_ratio)
     if keep_ratio:

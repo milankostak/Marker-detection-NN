@@ -132,7 +132,8 @@ with tf.Session() as sess:
     for epoch in range(args.total_epochs):
 
         sess.run(train_init_op)
-        loss_total, loss_xy, loss_wh, loss_conf, loss_class = AverageMeter(), AverageMeter(), AverageMeter(), AverageMeter(), AverageMeter()
+        loss_total, loss_xy, loss_wh, loss_conf, loss_class = \
+            AverageMeter(), AverageMeter(), AverageMeter(), AverageMeter(), AverageMeter()
 
         for i in trange(args.train_batch_num):
             _, summary, __y_pred, __y_true, __loss, __global_step, __lr = sess.run(
@@ -180,9 +181,9 @@ with tf.Session() as sess:
             val_preds = []
 
             for j in trange(args.val_img_cnt):
-                __image_ids, __y_pred, __loss = sess.run([image_ids, y_pred, loss],
-                                                         feed_dict={is_training: False})
+                __image_ids, __y_pred, __loss = sess.run([image_ids, y_pred, loss], feed_dict={is_training: False})
                 pred_content = get_preds_gpu(sess, gpu_nms_op, pred_boxes_flag, pred_scores_flag, __image_ids, __y_pred)
+
                 val_preds.extend(pred_content)
                 val_loss_total.update(__loss[0])
                 val_loss_xy.update(__loss[1])
