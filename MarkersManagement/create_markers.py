@@ -6,9 +6,6 @@ import shutil
 import numpy as np
 import math
 
-files = glob.glob("./images/*.jpg")
-print("Total images count:", len(files))
-
 # mode = "rectangle_filled"
 # mode = "rectangle_empty"
 # mode = "triangle_filled"
@@ -27,40 +24,43 @@ print("Total images count:", len(files))
 # mode = "T_cross_th1"
 mode = "T_cross"
 
-folder = "D:/Python/PycharmProjects/" + mode + "/"
-trainFolder = folder + "train/"
-valFolder = folder + "val/"
-testFolder = folder + "test/"
+input_files = glob.glob("./images/*.jpg")
+print("Total images count:", len(input_files))
 
-if not os.path.exists(folder):
-    os.mkdir(folder)
-if not os.path.exists(trainFolder):
-    os.mkdir(trainFolder)
-if not os.path.exists(valFolder):
-    os.mkdir(valFolder)
-if not os.path.exists(testFolder):
-    os.mkdir(testFolder)
+output_folder = "D:/Python/PycharmProjects/" + mode + "/"
+train_folder = output_folder + "train/"
+val_folder = output_folder + "val/"
+test_folder = output_folder + "test/"
+
+if not os.path.exists(output_folder):
+    os.mkdir(output_folder)
+if not os.path.exists(train_folder):
+    os.mkdir(train_folder)
+if not os.path.exists(val_folder):
+    os.mkdir(val_folder)
+if not os.path.exists(test_folder):
+    os.mkdir(test_folder)
 
 test_txt = ""
 train_txt = ""
 val_txt = ""
 
 file_format_length = 4
-if len(files) >= 10_000:
-    file_format_length = int(math.log10(len(files))) + 1
+if len(input_files) >= 10_000:
+    file_format_length = int(math.log10(len(input_files))) + 1
 
 counter = 0
-for file in files:
+for file in input_files:
     print(counter)
     name = f'{counter:0{file_format_length}d}'
 
     newFile = ""
     if counter % 10 < 7:  # <0;6>
-        newFile = trainFolder + name + ".jpg"
+        newFile = train_folder + name + ".jpg"
     elif counter % 10 < 9:
-        newFile = valFolder + name + ".jpg"
+        newFile = val_folder + name + ".jpg"
     else:
-        newFile = testFolder + name + ".jpg"
+        newFile = test_folder + name + ".jpg"
 
     shutil.copy(file, newFile)
     source = cv2.imread(newFile)
@@ -203,17 +203,17 @@ for file in files:
     cv2.imwrite(newFile, source)
     counter += 1
 
-with open(folder + "train.txt", "w") as file:
+with open(output_folder + "train.txt", "w") as file:
     file.write(train_txt)
 
-with open(folder + "val.txt", "w") as file:
+with open(output_folder + "val.txt", "w") as file:
     file.write(val_txt)
 
-with open(folder + "test.txt", "w") as file:
+with open(output_folder + "test.txt", "w") as file:
     file.write(test_txt)
 
-with open(folder + "data.names", "w") as file:
+with open(output_folder + "data.names", "w") as file:
     file.write("marker")
 
-with open(folder + "marker_anchors.txt", "w") as file:
+with open(output_folder + "marker_anchors.txt", "w") as file:
     file.write("")
