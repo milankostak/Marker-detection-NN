@@ -55,6 +55,7 @@ for i in range(count):
             if possible_iou < false_positive_threshold:
                 false_positive_count += 1
                 # print(pred_line)
+                # print(possible_iou)
             possible_ious.append(possible_iou)
 
     if len(possible_ious) != 0:
@@ -74,6 +75,6 @@ for i in range(count):
 
 # median = np.median(all_ious)
 mean = np.mean(all_ious)
-print(mean)
+print(str(mean).replace(".", ","))
 print("false positive:", false_positive_count)
 print("false negative:", false_negative_count)
