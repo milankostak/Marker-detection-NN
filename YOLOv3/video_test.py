@@ -30,6 +30,10 @@ args.class_name_path = base_path + "data.names"
 args.restore_path = "./data/darknet_weights/yolov3.ckpt"
 # Whether to save the video detection results.
 args.save_video = False
+# The probability threshold that the proposed bounding box needs to meet
+args.score_thresh = 0.3
+# The IoU threshold for non-maximum suppression (NMS) of similar bounding boxes; lower value cuts more
+args.nms_thresh = 0.45
 
 args.anchors = parse_anchors(args.anchor_path)
 args.classes = read_class_names(args.class_name_path)
@@ -57,7 +61,8 @@ with tf.Session() as sess:
     pred_boxes, pred_confs, pred_probs = yolo_model.predict(pred_feature_maps)
     pred_scores = pred_confs * pred_probs
 
-    boxes, scores, labels = gpu_nms(pred_boxes, pred_scores, args.num_class, max_boxes=200, score_thresh=0.3, nms_thresh=0.45)
+    boxes, scores, labels = gpu_nms(pred_boxes, pred_scores, args.num_class,
+                                    max_boxes=200, score_thresh=args.score_thresh, nms_thresh=args.nms_thresh)
 
     saver = tf.train.Saver()
     saver.restore(sess, args.restore_path)
