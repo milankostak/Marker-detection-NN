@@ -53,8 +53,8 @@ with tf.Session() as sess:
     yolo_model = yolov3(args.num_class, args.anchors)
     with tf.variable_scope('yolov3'):
         pred_feature_maps = yolo_model.forward(input_data, False)
-    pred_boxes, pred_confs, pred_probs = yolo_model.predict(pred_feature_maps)
 
+    pred_boxes, pred_confs, pred_probs = yolo_model.predict(pred_feature_maps)
     pred_scores = pred_confs * pred_probs
 
     boxes, scores, labels = gpu_nms(pred_boxes, pred_scores, args.num_class, max_boxes=200, score_thresh=0.3, nms_thresh=0.45)
@@ -88,7 +88,9 @@ with tf.Session() as sess:
 
         for i in range(len(boxes_)):
             x0, y0, x1, y1 = boxes_[i]
-            plot_one_box(img_ori, [x0, y0, x1, y1], label=args.classes[labels_[i]] + ', {:.2f}%'.format(scores_[i] * 100), color=color_table[labels_[i]])
+            plot_one_box(img_ori, [x0, y0, x1, y1],
+                         label=args.classes[labels_[i]] + ', {:.2f}%'.format(scores_[i] * 100),
+                         color=color_table[labels_[i]])
         cv2.putText(img_ori, '{:.2f}ms'.format((end_time - start_time) * 1000), (40, 40), 0,
                     fontScale=1, color=(0, 255, 0), thickness=2)
         cv2.imshow('image', img_ori)

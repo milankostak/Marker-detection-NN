@@ -224,4 +224,3 @@ with tf.Session() as sess:
             writer.add_summary(make_summary('validation_statistics/loss_wh', val_loss_wh.average), global_step=epoch)
             writer.add_summary(make_summary('validation_statistics/loss_conf', val_loss_conf.average), global_step=epoch)
             writer.add_summary(make_summary('validation_statistics/loss_class', val_loss_class.average), global_step=epoch)
-

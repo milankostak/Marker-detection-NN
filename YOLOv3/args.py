@@ -58,7 +58,7 @@ pw_values = [learning_rate_init, 3e-5, 1e-5]
 # choice 2: restore all layers except the last 3 conv2d layers in 3 scale
 restore_include = None
 restore_exclude = ['yolov3/yolov3_head/Conv_14', 'yolov3/yolov3_head/Conv_6', 'yolov3/yolov3_head/Conv_22']
-# Choose the parts you want to finetune. List form.
+# Choose the parts you want to fine-tune. List form.
 # Set to None to train the whole model.
 update_part = ['yolov3/yolov3_head']
 

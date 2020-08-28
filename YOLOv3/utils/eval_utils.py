@@ -94,7 +94,8 @@ def evaluate_on_cpu(y_pred, y_true, num_classes, calc_now=True, max_boxes=50, sc
         # pred_labels: [N]
         # N: Detected box number of the current image
         pred_boxes, pred_confs, pred_labels = cpu_nms(pred_boxes, pred_confs * pred_probs, num_classes,
-                                                      max_boxes=max_boxes, score_thresh=score_thresh, iou_thresh=iou_thresh)
+                                                      max_boxes=max_boxes, score_thresh=score_thresh,
+                                                      iou_thresh=iou_thresh)
 
         # len: N
         pred_labels_list = [] if pred_labels is None else pred_labels.tolist()

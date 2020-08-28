@@ -54,8 +54,8 @@ with tf.Session() as sess:
     yolo_model = yolov3(args.num_class, args.anchors)
     with tf.variable_scope('yolov3'):
         pred_feature_maps = yolo_model.forward(input_data, False)
-    pred_boxes, pred_confs, pred_probs = yolo_model.predict(pred_feature_maps)
 
+    pred_boxes, pred_confs, pred_probs = yolo_model.predict(pred_feature_maps)
     pred_scores = pred_confs * pred_probs
 
     boxes, scores, labels = gpu_nms(pred_boxes, pred_scores, args.num_class, max_boxes=200, score_thresh=0.3, nms_thresh=0.45)
