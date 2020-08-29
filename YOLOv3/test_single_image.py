@@ -104,7 +104,7 @@ with tf.Session() as sess:
 
         results += name
         for j in range(0, len(boxes_)):
-            results += (" " + str(boxes_[j][0]) + " " + str(boxes_[j][1]) + " " + str(boxes_[j][2]) + " " + str(boxes_[j][3]))
+            results += " {:.4f} {:.4f} {:.4f} {:.4f}".format(boxes_[j][0], boxes_[j][1], boxes_[j][2], boxes_[j][3])
         results += "\n"
 
         for i in range(len(boxes_)):

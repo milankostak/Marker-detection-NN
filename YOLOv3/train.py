@@ -205,8 +205,8 @@ with tf.Session() as sess:
                 ap_total.update(ap, 1)
 
             mAP = ap_total.average
-            info += 'EVAL: Recall: {:.4f}, Precison: {:.4f}, mAP: {:.4f}\n'.format(rec_total.average, prec_total.average, mAP)
-            info += 'EVAL: loss: total: {:.2f}, xy: {:.2f}, wh: {:.2f}, conf: {:.2f}, class: {:.2f}\n'.format(
+            info += 'EVAL: Recall: {:.4f}, Precision: {:.4f}, mAP: {:.4f}\n'.format(rec_total.average, prec_total.average, mAP)
+            info += 'EVAL: loss: total: {:.3f}, xy: {:.3f}, wh: {:.3f}, conf: {:.3f}, class: {:.3f}\n'.format(
                 val_loss_total.average, val_loss_xy.average, val_loss_wh.average, val_loss_conf.average, val_loss_class.average)
             print(info)
             logging.info(info)

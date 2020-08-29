@@ -8,7 +8,7 @@ import math
 import os.path
 
 ### Some paths
-base_path = 'D:/Python/PycharmProjects/images/'
+base_path = 'D:/Python/PycharmProjects/marker_testing/T_cross_real2/'
 train_file = base_path + 'train.txt'  # The path of the training txt file.
 val_file = base_path + 'val.txt'  # The path of the validation txt file.
 restore_path = './data/darknet_weights/yolov3.ckpt'  # The path of the weights to restore.
@@ -23,10 +23,10 @@ class_name_path = base_path + 'data.names'  # The path of the class names.
 batch_size = 6
 img_size = [416, 416]  # Images will be resized to `img_size` and fed to the network, size format: [width, height]
 letterbox_resize = True  # Whether to use the letterbox resize, i.e., keep the original aspect ratio in the resized image.
-total_epochs = 100
+total_epochs = 50
 train_evaluation_step = 100  # Evaluate on the training batch after some steps.
-val_evaluation_epoch = 2  # Evaluate on the whole validation dataset after some epochs. Set to None to evaluate every epoch.
-save_epoch = 10  # Save the model after some epochs.
+val_evaluation_epoch = 2  # Evaluate on the whole validation dataset after some epochs. Set to 1 to evaluate every epoch.
+save_epoch = 2  # Save the model after some epochs.
 batch_norm_decay = 0.99  # decay in bn ops
 weight_decay = 5e-4  # l2 weight decay
 global_step = 0  # used when resuming training
@@ -72,11 +72,11 @@ warm_up_epoch = 3  # Warm up training epochs. Set to a larger value if gradient 
 
 ### some constants in validation
 # nms
-nms_threshold = 0.45  # iou threshold in nms operation
+nms_threshold = 0.45  # IoU threshold in nms operation
 score_threshold = 0.01  # threshold of the probability of the classes in nms operation, i.e. score = pred_confs * pred_probs. set lower for higher recall.
 nms_topk = 150  # keep at most nms_topk outputs after nms
 # mAP eval
-eval_threshold = 0.5  # the iou threshold applied in mAP evaluation
+eval_threshold = 0.5  # the IoU threshold applied in mAP evaluation
 use_voc_07_metric = False  # whether to use voc 2007 evaluation metric, i.e. the 11-point metric
 
 ### parse some params
