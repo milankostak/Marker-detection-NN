@@ -3,12 +3,14 @@
 
 from __future__ import division, print_function
 
-from YOLOv3.utils.misc_utils import parse_anchors, read_class_names
+import datetime
 import math
 import os.path
 
+from YOLOv3.utils.misc_utils import parse_anchors, read_class_names
+
 ### Some paths
-base_path = 'D:/Python/PycharmProjects/marker_testing/T_cross_real2/'
+base_path = 'D:/Python/PycharmProjects/images/'
 train_file = base_path + 'train.txt'  # The path of the training txt file.
 val_file = base_path + 'val.txt'  # The path of the validation txt file.
 restore_path = './data/darknet_weights/yolov3.ckpt'  # The path of the weights to restore.
@@ -18,6 +20,11 @@ log_dir = './data/logs/'  # The directory to store the tensorboard log files.
 progress_log_path = base_path + 'progress.log'  # The path to record the training progress.
 anchor_path = base_path + 'marker_anchors.txt'  # The path of the anchor txt file.
 class_name_path = base_path + 'data.names'  # The path of the class names.
+
+if not os.path.exists(log_dir):
+    os.mkdir(log_dir)
+log_dir += datetime.datetime.now().strftime('%Y_%m_%d_%H-%M-%S/')
+os.mkdir(log_dir)
 
 ### Training related numbers
 batch_size = 6
