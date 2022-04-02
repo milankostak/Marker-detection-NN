@@ -1,4 +1,5 @@
 import math
+import time
 
 import cv2
 import cv2 as cv
@@ -8,6 +9,7 @@ from matplotlib import pyplot as plt
 from MarkersManagement.asdf import get_cropped
 
 img = get_cropped()
+start = time.time()
 cv2.imshow("cropped", img)
 
 # div = 16
@@ -379,6 +381,8 @@ if len(lines_hough_p) > 0:
     cv2.line(final_img, (x_main_1, y_main_1), (x_main_3, y_main_3), (0, 255, 0), 2, cv2.LINE_AA)
     cv2.line(final_img, (x_main_2, y_main_2), (x_main_4, y_main_4), (0, 255, 0), 2, cv2.LINE_AA)
     cv2.line(final_img, (x_main_3, y_main_3), (x_main_4, y_main_4), (0, 255, 0), 2, cv2.LINE_AA)
+end = time.time()
+print(end - start)
 
 cv2.imshow("Canny", edges_dst)
 cv2.imshow("Standard Hough Line Transform", lines_dst)
