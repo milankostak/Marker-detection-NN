@@ -61,8 +61,7 @@ def bbox_crop(bbox, crop_box=None, allow_outside_center=True):
     if crop_box is None:
         return bbox
     if not len(crop_box) == 4:
-        raise ValueError(
-            "Invalid crop_box parameter, requires length 4, given {}".format(str(crop_box)))
+        raise ValueError("Invalid crop_box parameter, requires length 4, given {}".format(str(crop_box)))
     if sum([int(c is None) for c in crop_box]) == 4:
         return bbox
 
