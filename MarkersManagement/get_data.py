@@ -6,7 +6,7 @@ import cv2 as cv
 import numpy as np
 from matplotlib import pyplot as plt
 
-from MarkersManagement.asdf import get_cropped
+from MarkersManagement.get_cropped import get_cropped
 
 img = get_cropped()
 start = time.time()
