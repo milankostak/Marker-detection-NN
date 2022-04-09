@@ -27,14 +27,18 @@ def get_cropped(image_id: str = None, padding: int = 15):
 
     matches = (x for x in lines if x[0] == image_id)
     bb = next(matches)
+    if len(bb) == 1:
+        return None
+
     x1 = float(bb[1]) - padding
     y1 = float(bb[2]) - padding
     x2 = float(bb[3]) + padding
     y2 = float(bb[4]) + padding
-    width = round(x2 - x1)
-    height = round(y2 - y1)
-    print("width", width)
-    print("height", height)
+
+    # width = round(x2 - x1)
+    # height = round(y2 - y1)
+    # print("width", width)
+    # print("height", height)
 
     # image_eval_path = f"{base_path}test_eval/{image_id}_eval.jpg"
     # img_eval = cv2.imread(image_eval_path)
