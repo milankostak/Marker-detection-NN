@@ -17,9 +17,9 @@ cv2.imshow("cropped", img)
 # quantization of the image did not bring any good results
 
 # RGB histogram
-color = ("b", "g", "r")
-for k, color in enumerate(color):
-    histogram = cv.calcHist([img], [k], None, [256], [0, 256])
+colors = ("b", "g", "r")
+for k, color in enumerate(colors):
+    histogram = cv.calcHist(images=[img], channels=[k], mask=None, histSize=[256], ranges=[0, 256])
     plt.plot(histogram, color=color)
     plt.xlim([0, 256])
 plt.title("RGB histogram")
@@ -29,7 +29,7 @@ plt.title("RGB histogram")
 hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
 # TODO pixels towards the center of the image should have more weight
 # TODO maybe do it only on a circle (ellipsis) around the center?
-hist = cv.calcHist([hsv], [0], None, [180], [0, 180])
+hist = cv.calcHist(images=[hsv], channels=[0], mask=None, histSize=[180], ranges=[0, 180])
 target_hue = np.argmax(hist)
 print("Final hue:", target_hue * 2)
 plt.title("Hue histogram")
@@ -65,7 +65,7 @@ element = cv.getStructuringElement(
     ksize=(2 * erosion_size + 1, 2 * erosion_size + 1),
     anchor=(erosion_size, erosion_size)
 )
-erosion_dst = cv.erode(h, element)
+erosion_dst = cv.erode(src=h, kernel=element)
 cv.imshow("Erosion", erosion_dst)
 
 # after erosion, apply dilatation to get to the original size of the marker
@@ -76,30 +76,30 @@ element = cv.getStructuringElement(
     ksize=(2 * dilatation_size + 1, 2 * dilatation_size + 1),
     anchor=(dilatation_size, dilatation_size)
 )
-dilatation_dst = cv.dilate(erosion_dst, element)
+dilatation_dst = cv.dilate(src=erosion_dst, kernel=element)
 cv.imshow("Dilatation", dilatation_dst)
 
-# apply blur before thresholding
-blur_dst = cv.GaussianBlur(dilatation_dst, (11, 11), 0)
+# apply Gaussian blur before thresholding
+blur_dst = cv.GaussianBlur(src=dilatation_dst, ksize=(11, 11), sigmaX=0)
 cv2.imshow("Blur", blur_dst)
 
 # threshold the result with Otsu's adaptive thresholding
-threshold_value, threshold_dst = cv.threshold(blur_dst, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
+threshold_value, threshold_dst = cv.threshold(src=blur_dst, thresh=0, maxval=255, type=cv.THRESH_BINARY + cv.THRESH_OTSU)
 print("Otsu's threshold value:", threshold_value)
-cv2.imshow("threshold", threshold_dst)
+cv2.imshow("After Otsu's thresholding", threshold_dst)
 
 # apply canny edges detector
-edges_dst = cv2.Canny(threshold_dst, 50, 200, None, 3)
+edges_dst = cv2.Canny(image=threshold_dst, threshold1=50, threshold2=200, edges=None, apertureSize=3)
 
 # copy the edge-detection results for later use of displaying hough lines
-lines_dst = cv2.cvtColor(edges_dst, cv2.COLOR_GRAY2BGR)
+lines_dst = cv2.cvtColor(src=edges_dst, code=cv2.COLOR_GRAY2BGR)
 lines_p_dst = np.copy(lines_dst)
 
 # apply classic Hough lines algorithm
 # automatically change the threshold accordingly to get the optimal number of lines (not too much, but not too few)
 threshold_hough = 30
 while True:
-    lines_hough = cv2.HoughLines(edges_dst, 1, np.pi / 180, threshold_hough, None, 0, 0)
+    lines_hough = cv2.HoughLines(image=edges_dst, rho=1, theta=np.pi / 180, threshold=threshold_hough, srn=0, stn=0)
     if threshold_hough < 0:
         # if no lines cannot be detected in the image
         break
@@ -134,7 +134,14 @@ for i in range(0, len(lines_hough)):
 # automatically change the threshold accordingly to get the optimal number of lines (not too much, but not too few)
 threshold_hough_p = 20
 while True:
-    lines_hough_p = cv2.HoughLinesP(edges_dst, 1, np.pi / 180, threshold_hough_p, None, 15, 50)
+    lines_hough_p = cv2.HoughLinesP(
+        image=edges_dst,
+        rho=1,
+        theta=np.pi / 180,
+        threshold=threshold_hough_p,
+        minLineLength=15,
+        maxLineGap=50
+    )
     if threshold_hough_p < 0:
         # if no lines cannot be detected in the image
         break
@@ -153,7 +160,14 @@ print("Hough-P lines count:", len(lines_hough_p))
 # draw the resulting lines of probabilistic Hough Lines algorithm
 for i in range(0, len(lines_hough_p)):
     line = lines_hough_p[i][0]
-    cv2.line(lines_p_dst, (line[0], line[1]), (line[2], line[3]), (0, 0, 255), 1, cv2.LINE_AA)
+    cv2.line(
+        img=lines_p_dst,
+        pt1=(line[0], line[1]),
+        pt2=(line[2], line[3]),
+        color=(0, 0, 255),
+        thickness=1,
+        lineType=cv2.LINE_AA
+    )
     # print(line)
 
 
@@ -306,10 +320,17 @@ if len(lines_hough_p) > 0:
     if orientation_vector[1] > 0:
         angle = 360 - angle
     print("orientation:", str(round(angle)) + "°")
-    cv2.putText(final_img, str(round(angle)), (2, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
+    cv2.putText(
+        img=final_img,
+        text=str(round(angle)),
+        org=(2, 12),
+        fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+        fontScale=0.5,
+        color=(0, 0, 0)
+    )
     cv2.line(final_img, (int(ox_1), int(oy_1)), (int(ox_2), int(oy_2)), (255, 0, 0), 1, cv2.LINE_AA)
     cv2.line(final_img, (int(ox_1), int(oy_1)), (int(ox_2), int(oy_2)), (255, 0, 0), 1, cv2.LINE_AA)
-    cv2.circle(final_img, center=(int(ox_2), int(oy_2)), radius=3, color=(255, 0, 0), thickness=5)
+    cv2.circle(img=final_img, center=(int(ox_2), int(oy_2)), radius=3, color=(255, 0, 0), thickness=5)
 
     # if length_mean_1 < length_mean_2:
     #     k_or = k_inner_1
