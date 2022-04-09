@@ -1,6 +1,8 @@
 import cv2
 
-with open("D:/Python/PycharmProjects/images/predicted.txt", "r") as file:
+base_path = "D:/Python/PycharmProjects/images/"
+
+with open(f"{base_path}predicted.txt", "r") as file:
     lines = [line.rstrip().split(" ") for line in file]
 
 
@@ -34,11 +36,11 @@ def get_cropped(image_id: str = None, padding: int = 15):
     print("width", width)
     print("height", height)
 
-    # image_eval_path = f"D:/Python/PycharmProjects/images/test_eval/{image_id}_eval.jpg"
+    # image_eval_path = f"{base_path}test_eval/{image_id}_eval.jpg"
     # img_eval = cv2.imread(image_eval_path)
     # cv2.imshow("original", img_eval)
 
-    image_path = f"D:/Python/PycharmProjects/images/test/{image_id}.jpg"
+    image_path = f"{base_path}/test/{image_id}.jpg"
     img = cv2.imread(image_path)
     cropped_image = img[round(y1):round(y2), round(x1):round(x2)]
     return cropped_image
