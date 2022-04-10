@@ -32,7 +32,7 @@ with open(base_path + "predicted.txt") as file:
     pred_lines = [line.rstrip() for line in file]
 pred_lines.sort(key=lambda x: int(x.split(" ")[0]))
 
-all_ious = list()
+all_ious = []
 false_positive_count = 0
 false_positive_threshold = 0.2
 false_negative_count = 0
@@ -44,7 +44,7 @@ for i in range(count):
     gt_box = [float(e) for e in gt_box]
 
     pred_line = pred_lines[i].split(" ")
-    possible_ious = list()
+    possible_ious = []
     pred_count = len(pred_line)
     if pred_count > 1:
         for j in range(1, pred_count, 5):  # 5 if scores are included in the predicted files
