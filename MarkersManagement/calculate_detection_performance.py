@@ -1,5 +1,7 @@
 import math
 
+import numpy as np
+
 from MarkersManagement.get_cropped import get_cropped
 from MarkersManagement.get_data import get_data
 
@@ -24,7 +26,7 @@ base_path = "D:/Python/PycharmProjects/images/"
 with open(base_path + "test/marker_data.txt") as file:
     markers = [line.rstrip() for line in file]
 
-min_c = 100_000
+data = []
 count = len(markers)
 for i in range(count):
     marker = markers[i].split(" ")
@@ -57,11 +59,38 @@ for i in range(count):
 
         detected_content = get_content(detected_values[2], detected_values[3], detected_values[4], detected_values[5])
 
-        print(length(detected_center, (center_x - base_x, center_y - base_y)))
+        center_diff = length(detected_center, (center_x - base_x, center_y - base_y))
+        print(center_diff)
         print(angle, detected_angle, angle_diff)
-        c = abs(content - detected_content)
-        if c < min_c:
-            min_c = c
-            print("MIN CONTENT")
-        print(abs(content - detected_content))
+        content_diff = abs(content - detected_content)
+        print(content_diff)
+
+        data.append([image_id_zeros, center_diff, angle_diff, content_diff])
     print("")
+
+data = np.array(data)
+print("Total count:", data.shape[0])
+print()
+
+centers = data[:, 1].astype(np.float)
+angles = data[:, 2].astype(np.float)
+contents = data[:, 3].astype(np.float)
+
+
+def asdf(values: np.ndarray, name: str, limit: int):
+    print(f"{name} median: {np.median(values):.2f}")
+    print(f"{name} mean: {np.mean(values):.2f}")
+    values_good = values[values < limit]
+    print(f"{name} good count:", values_good.shape[0])
+    print(f"{name} bad count:", data.shape[0] - values_good.shape[0])
+    print(f"{name} good percent: {(values_good.shape[0] / values.shape[0]) * 100:.2f}%")
+    print(f"{name} good median: {np.median(values_good):.2f}")
+    print(f"{name} good mean: {np.mean(values_good):.2f}")
+    print()
+
+
+asdf(centers, "Centers", 60)
+asdf(angles, "Angles", 30)
+asdf(contents, "Contents", 5000)
+
+# print(data)
