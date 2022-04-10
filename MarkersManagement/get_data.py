@@ -23,8 +23,7 @@ def get_xy(k1, q1, k2, q2):
     return [int(round(x)), int(round(y))]
 
 
-def get_data(image_id: str, show_outputs: bool = True):
-    img = get_cropped(image_id)
+def get_data(img: np.ndarray, show_outputs: bool = True):
     if img is None:
         return []
 
@@ -447,20 +446,21 @@ def get_data(image_id: str, show_outputs: bool = True):
 
 
 if __name__ == '__main__':
-    # image_id_ = "0549"  # ! 15
-    # image_id_ = "0243"  # !
-    # image_id_ = "0039"  # fialová na žluté   # ! 5
-    # image_id_ = "0313"  # modrá na zelené
-    # image_id_ = "0037"  # ! 5
-    # image_id_ = "0048"
-    # image_id_ = "0049"  # ! 15
-    # image_id_ = "0058"  # ! 15
-    # image_id_ = "0107"
-    # image_id_ = "0127"  # ?
-    # image_id_ = "0128"  # svislá
-    # image_id_ = "0149"
-    # image_id_ = "0181"
-    # image_id_ = "0211"  # svislá
-    # image_id_ = "0385"  # !
-    image_id_ = "0416"
-    print(get_data(image_id_))
+    # image_id = "0549"  # ! 15
+    # image_id = "0243"  # !
+    # image_id = "0039"  # fialová na žluté   # ! 5
+    # image_id = "0313"  # modrá na zelené
+    # image_id = "0037"  # ! 5
+    # image_id = "0048"
+    # image_id = "0049"  # ! 15
+    # image_id = "0058"  # ! 15
+    # image_id = "0107"
+    # image_id = "0127"  # ?
+    # image_id = "0128"  # svislá
+    # image_id = "0149"
+    # image_id = "0181"
+    # image_id = "0211"  # svislá
+    # image_id = "0385"  # !
+    image_id = "0416"
+    img_, x, y, = get_cropped(image_id)
+    print(get_data(img_))

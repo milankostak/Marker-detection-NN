@@ -9,11 +9,15 @@ with open(f"{base_path}predicted.txt", "r") as file:
 def get_cropped(image_id: str, padding: int = 15):
     matches = (x for x in lines if x[0] == image_id)
     bb = next(matches)
-    if len(bb) == 1:
-        return None
+    if len(bb) <= 1:
+        return [None, -1, -1]
 
     x1 = float(bb[1]) - padding
+    if x1 < 0:
+        x1 = 0
     y1 = float(bb[2]) - padding
+    if y1 < 0:
+        y1 = 0
     x2 = float(bb[3]) + padding
     y2 = float(bb[4]) + padding
 
@@ -29,4 +33,4 @@ def get_cropped(image_id: str, padding: int = 15):
     image_path = f"{base_path}/test/{image_id}.jpg"
     img = cv2.imread(image_path)
     cropped_image = img[round(y1):round(y2), round(x1):round(x2)]
-    return cropped_image
+    return [cropped_image, round(x1), round(y1)]
