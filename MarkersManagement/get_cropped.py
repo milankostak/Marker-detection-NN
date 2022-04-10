@@ -6,25 +6,7 @@ with open(f"{base_path}predicted.txt", "r") as file:
     lines = [line.rstrip().split(" ") for line in file]
 
 
-def get_cropped(image_id: str = None, padding: int = 15):
-    if image_id is None:
-        # image_id = "0549"  # ! 15
-        # image_id = "0243"  # !
-        # image_id = "0039"  # fialová na žluté   # ! 5
-        # image_id = "0313"  # modrá na zelené
-        # image_id = "0037"  # ! 5
-        # image_id = "0048"
-        # image_id = "0049"  # ! 15
-        # image_id = "0058"  # ! 15
-        # image_id = "0107"
-        # image_id = "0127"  # ?
-        # image_id = "0128"  # svislá
-        # image_id = "0149"
-        # image_id = "0181"
-        # image_id = "0211"  # svislá
-        image_id = "0385"  # !
-        # image_id = "0416"
-
+def get_cropped(image_id: str, padding: int = 15):
     matches = (x for x in lines if x[0] == image_id)
     bb = next(matches)
     if len(bb) == 1:
