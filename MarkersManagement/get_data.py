@@ -125,16 +125,24 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
     # apply classic Hough lines algorithm
     # automatically change the threshold accordingly to get the optimal number of lines (not too much, but not too few)
     threshold_hough = 30
+    while_iteration_limit = 0
+    change = 5
     while True:
         lines_hough = cv2.HoughLines(image=edges_dst, rho=1, theta=np.pi / 180, threshold=threshold_hough, srn=0, stn=0)
         if threshold_hough < 0:
             # if no lines cannot be detected in the image
             break
+        if while_iteration_limit > 7:
+            change = 1
         if lines_hough is None or len(lines_hough) <= 5:
-            threshold_hough = threshold_hough - 5
+            threshold_hough = threshold_hough - change
         elif len(lines_hough) >= 50:
-            threshold_hough = threshold_hough + 5
+            threshold_hough = threshold_hough + change
         else:
+            break
+
+        while_iteration_limit = while_iteration_limit + 1
+        if while_iteration_limit > 20:
             break
     if lines_hough is None:
         lines_hough = []
@@ -161,6 +169,8 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
     # apply probabilistic Hough lines algorithm
     # automatically change the threshold accordingly to get the optimal number of lines (not too much, but not too few)
     threshold_hough_p = 20
+    while_iteration_limit = 0
+    change = 5
     while True:
         lines_hough_p = cv2.HoughLinesP(
             image=edges_dst,
@@ -173,11 +183,17 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
         if threshold_hough_p < 0:
             # if no lines cannot be detected in the image
             break
+        if while_iteration_limit > 7:
+            change = 1
         if lines_hough_p is None or len(lines_hough_p) <= 10:
-            threshold_hough_p = threshold_hough_p - 5
+            threshold_hough_p = threshold_hough_p - change
         elif len(lines_hough_p) >= 40:
-            threshold_hough_p = threshold_hough_p + 5
+            threshold_hough_p = threshold_hough_p + change
         else:
+            break
+
+        while_iteration_limit = while_iteration_limit + 1
+        if while_iteration_limit > 20:
             break
     if lines_hough_p is None:
         lines_hough_p = []
