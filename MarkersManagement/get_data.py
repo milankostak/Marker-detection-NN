@@ -2,7 +2,6 @@ import math
 import time
 
 import cv2
-import cv2 as cv
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -38,17 +37,17 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
     # RGB histogram
     colors = ("b", "g", "r")
     for k, color in enumerate(colors):
-        histogram = cv.calcHist(images=[img], channels=[k], mask=None, histSize=[256], ranges=[0, 256])
+        histogram = cv2.calcHist(images=[img], channels=[k], mask=None, histSize=[256], ranges=[0, 256])
         plt.plot(histogram, color=color)
         plt.xlim([0, 256])
     plt.title("RGB histogram")
     # plt.show()
 
     # convert image to HSV model; get hue histogram; then get the most common hue value
-    hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     # TODO pixels towards the center of the image should have more weight
     # TODO maybe do it only on a circle (ellipsis) around the center?
-    hist = cv.calcHist(images=[hsv], channels=[0], mask=None, histSize=[180], ranges=[0, 180])
+    hist = cv2.calcHist(images=[hsv], channels=[0], mask=None, histSize=[180], ranges=[0, 180])
     target_hue = np.argmax(hist)
     if show_outputs:
         print("Final hue:", target_hue * 2)
@@ -81,35 +80,35 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
 
     # do erosion operation to fill noise spaces (there many of these, and the operation is absolutely necessary)
     erosion_size = 5
-    element = cv.getStructuringElement(
-        shape=cv.MORPH_RECT,
+    element = cv2.getStructuringElement(
+        shape=cv2.MORPH_RECT,
         ksize=(2 * erosion_size + 1, 2 * erosion_size + 1),
         anchor=(erosion_size, erosion_size)
     )
-    erosion_dst = cv.erode(src=h, kernel=element)
+    erosion_dst = cv2.erode(src=h, kernel=element)
     if show_outputs:
-        cv.imshow("Erosion", erosion_dst)
+        cv2.imshow("Erosion", erosion_dst)
 
     # after erosion, apply dilatation to get to the original size of the marker
     # some noise space might again appear, but there should be only a few, so they do not break the further steps
     dilatation_size = 5
-    element = cv.getStructuringElement(
-        shape=cv.MORPH_RECT,
+    element = cv2.getStructuringElement(
+        shape=cv2.MORPH_RECT,
         ksize=(2 * dilatation_size + 1, 2 * dilatation_size + 1),
         anchor=(dilatation_size, dilatation_size)
     )
-    dilatation_dst = cv.dilate(src=erosion_dst, kernel=element)
+    dilatation_dst = cv2.dilate(src=erosion_dst, kernel=element)
     if show_outputs:
-        cv.imshow("Dilatation", dilatation_dst)
+        cv2.imshow("Dilatation", dilatation_dst)
 
     # apply Gaussian blur before thresholding
-    blur_dst = cv.GaussianBlur(src=dilatation_dst, ksize=(11, 11), sigmaX=0)
+    blur_dst = cv2.GaussianBlur(src=dilatation_dst, ksize=(11, 11), sigmaX=0)
     if show_outputs:
         cv2.imshow("Blur", blur_dst)
 
     # threshold the result with Otsu's adaptive thresholding
-    threshold_value, threshold_dst = cv.threshold(
-        src=blur_dst, thresh=0, maxval=255, type=cv.THRESH_BINARY + cv.THRESH_OTSU
+    threshold_value, threshold_dst = cv2.threshold(
+        src=blur_dst, thresh=0, maxval=255, type=cv2.THRESH_BINARY + cv2.THRESH_OTSU
     )
     if show_outputs:
         print("Otsu's threshold value:", threshold_value)
