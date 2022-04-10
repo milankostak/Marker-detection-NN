@@ -15,7 +15,7 @@ from YOLOv3.utils.data_aug import letterbox_resize
 
 from YOLOv3.model import yolov3
 
-base_path = 'D:/Python/PycharmProjects/images/'
+base_path = "D:/Python/PycharmProjects/images/"
 
 args = SimpleObject()
 # The path of the anchor txt file.

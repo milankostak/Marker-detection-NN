@@ -109,7 +109,9 @@ def get_data(image_id: str = None, show_outputs: bool = True):
         cv2.imshow("Blur", blur_dst)
 
     # threshold the result with Otsu's adaptive thresholding
-    threshold_value, threshold_dst = cv.threshold(src=blur_dst, thresh=0, maxval=255, type=cv.THRESH_BINARY + cv.THRESH_OTSU)
+    threshold_value, threshold_dst = cv.threshold(
+        src=blur_dst, thresh=0, maxval=255, type=cv.THRESH_BINARY + cv.THRESH_OTSU
+    )
     if show_outputs:
         print("Otsu's threshold value:", threshold_value)
         cv2.imshow("After Otsu's thresholding", threshold_dst)
@@ -237,12 +239,13 @@ def get_data(image_id: str = None, show_outputs: bool = True):
         kqs_3 = lines[max_indices[1]:max_indices[2]]
         kqs_4 = lines[max_indices[2]:]
 
-        # now, it is necessary to find out which 2 groups are the rectangular area and which are the inner "T-cross" shape
+        # now, it is necessary to find out which 2 groups are the rectangular area and which are inner "T-cross" shape
         # the trick is that the lines of the outer rectangular area can be further divided into 2 groups
         # the lines in such a group will have the same slope but very different "q" values
-        # by the calculated standard deviation of the "q" values in all four groups, it is possible to divide the groups,
-        # because the lines of the outer rectangular area will have much higher std
-        # also, given the characteristics of the slope, the outer rectangle will be either groups 1 and 3 or groups 2 and 4
+        # by the calculated standard deviation of the "q" values in all four groups, it is possible to divide the
+        #   groups, because the lines of the outer rectangular area will have much higher std
+        # also, given the characteristics of the slope,
+        #   the outer rectangle will be either groups 1 and 3 or groups 2 and 4
         # the same applies to the inner shape - either groups 1 and 3 or groups 2 and 4
         q_std_1 = np.std(list(map(lambda val: val[1], kqs_1)))
         q_std_2 = np.std(list(map(lambda val: val[1], kqs_2)))
@@ -250,7 +253,8 @@ def get_data(image_id: str = None, show_outputs: bool = True):
         q_std_4 = np.std(list(map(lambda val: val[1], kqs_4)))
 
         # TODO this will need further refinement
-        # firstly, the sum of 1+3 or 2+4 STDs were used to determine the inner shape, which should have much lower values
+        # firstly, the sum of 1+3 or 2+4 STDs were used to determine the inner shape,
+        #   which should have much lower values
         # however, this was not working as fine as expected
         # a better approach lies in using only the minimum value and then taking the other corresponding group
         # if q_std_1 + q_std_3 > q_std_2 + q_std_4:
@@ -286,11 +290,11 @@ def get_data(image_id: str = None, show_outputs: bool = True):
         ######
         # to get the orientation, it is necessary to find out which of the inner lines is the shorter one
         # - that one is used to determine the orientation
-        # a mean length of the lines was not working fine,
-        #   so the line with the maximum length is used to get the longer line - and then the other line is the shorter one
+        # a mean length of the lines was not working fine, so the line with the maximum length is used
+        #   to get the longer line - and then the other line is the shorter one
         # a possible future better approach might consist of calculating a maximal distance between all the points
-        #   in the given group; the shorter line is much less likely to have a longer distance between any of its two points
-        #   and maybe also use the information about the mean length to filter possible outliers
+        #   in the given group; the shorter line is much less likely to have a longer distance between any
+        #   of its two points and maybe also use the information about the mean length to filter possible outliers
         length_mean_1 = np.max(list(map(lambda val: val[2], inner_1)))
         length_mean_2 = np.max(list(map(lambda val: val[2], inner_2)))
         if length_mean_1 < length_mean_2:

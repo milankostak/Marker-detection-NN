@@ -16,7 +16,7 @@ from YOLOv3.utils.data_aug import letterbox_resize
 
 from YOLOv3.model import yolov3
 
-base_path = 'D:/Python/PycharmProjects/images/'
+base_path = "D:/Python/PycharmProjects/images/"
 
 args = SimpleObject()
 # The path of the anchor txt file.
@@ -54,16 +54,22 @@ if not os.path.exists(base_path + "test_eval/"):
 # img = img[np.newaxis, :] / 255.
 
 with tf.Session() as sess:
-    input_data = tf.placeholder(tf.float32, [1, args.new_size[1], args.new_size[0], 3], name='input_data')
+    input_data = tf.placeholder(tf.float32, [1, args.new_size[1], args.new_size[0], 3], name="input_data")
     yolo_model = yolov3(args.num_class, args.anchors)
-    with tf.variable_scope('yolov3'):
+    with tf.variable_scope("yolov3"):
         pred_feature_maps = yolo_model.forward(input_data, False)
 
     pred_boxes, pred_confs, pred_probs = yolo_model.predict(pred_feature_maps)
     pred_scores = pred_confs * pred_probs
 
-    boxes, scores, labels = gpu_nms(pred_boxes, pred_scores, args.num_class,
-                                    max_boxes=200, score_thresh=args.score_thresh, nms_thresh=args.nms_thresh)
+    boxes, scores, labels = gpu_nms(
+        boxes=pred_boxes,
+        scores=pred_scores,
+        num_classes=args.num_class,
+        max_boxes=200,
+        score_thresh=args.score_thresh,
+        nms_thresh=args.nms_thresh,
+    )
 
     saver = tf.train.Saver()
     saver.restore(sess, args.restore_path)
@@ -72,13 +78,13 @@ with tf.Session() as sess:
     results = ""
 
     for test_image in test_images:
-        img_ori = cv2.imread(test_image)
+        img_orig = cv2.imread(test_image)
         name = os.path.splitext(os.path.basename(test_image))[0]  # get the filename without extension
         if args.letterbox_resize:
-            img, resize_ratio, dw, dh = letterbox_resize(img_ori, args.new_size[0], args.new_size[1])
+            img, resize_ratio, dw, dh = letterbox_resize(img_orig, args.new_size[0], args.new_size[1])
         else:
-            height_ori, width_ori = img_ori.shape[:2]
-            img = cv2.resize(img_ori, tuple(args.new_size))
+            height_ori, width_ori = img_orig.shape[:2]
+            img = cv2.resize(img_orig, tuple(args.new_size))
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = np.asarray(img, np.float32)
         img = img[np.newaxis, :] / 255.
@@ -117,7 +123,7 @@ with tf.Session() as sess:
         results += "\n"
         # cv2.imshow('Detection result', img_ori)
         # cv2.waitKey(0)
-        cv2.imwrite(base_path + 'test_eval/' + name + '_eval.jpg', img_ori)
+        cv2.imwrite(f"{base_path}test_eval/{name}_eval.jpg", img_orig)
 
     with open(base_path + "predicted.txt", "w") as file:
         file.write(results)

@@ -23,12 +23,12 @@ def bb_intersection_over_union(box_a, box_b):
     return iou
 
 
-base_path = 'D:/Python/PycharmProjects/images/'
+base_path = "D:/Python/PycharmProjects/images/"
 
-with open(base_path + 'test.txt') as file:
+with open(base_path + "test.txt") as file:
     gt_lines = [line.rstrip() for line in file]
 
-with open(base_path + 'predicted.txt') as file:
+with open(base_path + "predicted.txt") as file:
     pred_lines = [line.rstrip() for line in file]
 pred_lines.sort(key=lambda x: int(x.split(" ")[0]))
 

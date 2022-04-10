@@ -11,7 +11,7 @@ from YOLOv3.utils.nms_utils import gpu_nms
 
 from YOLOv3.model import yolov3
 
-base_path = 'D:/Python/PycharmProjects/images/'
+base_path = "D:/Python/PycharmProjects/images/"
 
 args = SimpleObject()
 # The path of the anchor txt file.
@@ -47,7 +47,7 @@ args.val_img_cnt = len(open(args.val_file, 'r').readlines())
 
 # setting placeholders
 is_training = tf.placeholder(dtype=tf.bool, name="phase_train")
-handle_flag = tf.placeholder(tf.string, [], name='iterator_handle_flag')
+handle_flag = tf.placeholder(tf.string, [], name="iterator_handle_flag")
 pred_boxes_flag = tf.placeholder(tf.float32, [1, None, None])
 pred_scores_flag = tf.placeholder(tf.float32, [1, None, None])
 gpu_nms_op = gpu_nms(pred_boxes_flag, pred_scores_flag, args.class_num, args.nms_topk, args.score_threshold,
@@ -60,7 +60,7 @@ val_dataset = tf.data.TextLineDataset(args.val_file)
 val_dataset = val_dataset.batch(1)
 val_dataset = val_dataset.map(
     lambda x: tf.py_func(get_batch_data,
-                         [x, args.class_num, args.img_size, args.anchors, 'val', False, False, args.letterbox_resize],
+                         [x, args.class_num, args.img_size, args.anchors, "val", False, False, args.letterbox_resize],
                          [tf.int64, tf.float32, tf.float32, tf.float32, tf.float32]),
     num_parallel_calls=args.num_threads
 )
@@ -115,10 +115,10 @@ with tf.Session() as sess:
         rec_total.update(rec, npos)
         prec_total.update(prec, nd)
         ap_total.update(ap, 1)
-        print('Class {}: Recall: {:.4f}, Precision: {:.4f}, AP: {:.4f}'.format(ii, rec, prec, ap))
+        print("Class {}: Recall: {:.4f}, Precision: {:.4f}, AP: {:.4f}".format(ii, rec, prec, ap))
 
     mAP = ap_total.average
-    print('final mAP: {:.4f}'.format(mAP))
+    print("final mAP: {:.4f}".format(mAP))
     print("recall: {:.4f}, precision: {:.4f}".format(rec_total.average, prec_total.average))
     print("total_loss: {:.3f}, loss_xy: {:.3f}, loss_wh: {:.3f}, loss_conf: {:.3f}, loss_class: {:.3f}".format(
         val_loss_total.average, val_loss_xy.average, val_loss_wh.average, val_loss_conf.average, val_loss_class.average

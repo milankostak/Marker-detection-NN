@@ -15,7 +15,7 @@ def gpu_nms(boxes, scores, num_classes, max_boxes=50, score_thresh=0.5, nms_thre
         scores: tensor of shape [1, 10647, num_classes], score=conf*prob
         num_classes: total number of classes
         max_boxes: integer, maximum number of predicted boxes you'd like, default is 50
-        score_thresh: if [ highest class probability score < score_threshold]
+        score_thresh: if [ the highest class probability score < score_threshold]
                         then get rid of the corresponding box
         nms_thresh: real value, "intersection over union" threshold used for NMS filtering
     """
@@ -53,7 +53,7 @@ def py_nms(boxes, scores, max_boxes=50, iou_thresh=0.5):
     """
     Pure Python NMS baseline.
 
-    Arguments: boxes: shape of [-1, 4], the value of '-1' means that dont know the
+    Arguments: boxes: shape of [-1, 4], the value of '-1' means that don't know the
                       exact number of boxes
                scores: shape of [-1,]
                max_boxes: representing the maximum of boxes to be selected by non_max_suppression
