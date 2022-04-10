@@ -45,9 +45,28 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
 
     # convert image to HSV model; get hue histogram; then get the most common hue value
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    # TODO pixels towards the center of the image should have more weight
-    # TODO maybe do it only on a circle (ellipsis) around the center?
-    hist = cv2.calcHist(images=[hsv], channels=[0], mask=None, histSize=[180], ranges=[0, 180])
+
+    # TODO pixels towards the center of the image might need more weight
+    mask = np.zeros(shape=img.shape[:2], dtype=np.uint8)
+    # cv2.ellipse(
+    #     img=mask,
+    #     center=(img.shape[1] // 2, img.shape[0] // 2),
+    #     axes=(img.shape[1] // 2, img.shape[0] // 2),
+    #     angle=360,
+    #     startAngle=0,
+    #     endAngle=360,
+    #     color=255,
+    #     thickness=cv2.FILLED,
+    # )
+    points = np.array([
+        [img.shape[1] // 2, 0], [img.shape[1], img.shape[0] // 2],
+        [img.shape[1] // 2, img.shape[0]], [0, img.shape[0] // 2]
+    ])
+    cv2.fillPoly(img=mask, pts=[points], color=255)
+    if show_outputs:
+        cv2.imshow("Histogram mask", mask)
+
+    hist = cv2.calcHist(images=[hsv], channels=[0], mask=mask, histSize=[180], ranges=[0, 180])
     target_hue = np.argmax(hist)
     if show_outputs:
         print("Final hue:", target_hue * 2)
