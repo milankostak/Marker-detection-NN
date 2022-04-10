@@ -47,7 +47,7 @@ for i in range(count):
     possible_ious = list()
     pred_count = len(pred_line)
     if pred_count > 1:
-        for j in range(1, pred_count, 4):
+        for j in range(1, pred_count, 5):  # 5 if scores are included in the predicted files
             pred_box = [pred_line[j], pred_line[j + 1], pred_line[j + 2], pred_line[j + 3]]
             pred_box = [float(e) for e in pred_box]
 

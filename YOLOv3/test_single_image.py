@@ -103,18 +103,18 @@ with tf.Session() as sess:
         # print(labels_)
 
         results += name
-        for j in range(0, len(boxes_)):
-            results += " {:.4f} {:.4f} {:.4f} {:.4f}".format(boxes_[j][0], boxes_[j][1], boxes_[j][2], boxes_[j][3])
-        results += "\n"
-
         for i in range(len(boxes_)):
             x0, y0, x1, y1 = boxes_[i]
+            score = f"{scores_[i] * 100:.2f}"
+            results += f" {x0:.3f} {y0:.3f} {x1:.3f} {y1:.3f} {score}"
+
             plot_one_box(
-                img_ori, [x0, y0, x1, y1],
-                label=args.classes[labels_[i]] + ', {:.2f}%'.format(scores_[i] * 100),
+                img_orig, [x0, y0, x1, y1],
+                label=args.classes[labels_[i]] + f", {score}%",
                 color=[200, 200, 200]
                 # color=color_table[labels_[i]]
             )
+        results += "\n"
         # cv2.imshow('Detection result', img_ori)
         # cv2.waitKey(0)
         cv2.imwrite(base_path + 'test_eval/' + name + '_eval.jpg', img_ori)
