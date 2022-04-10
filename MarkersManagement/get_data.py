@@ -153,7 +153,7 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
 
     # process the result of the classic Hough lines algorithm to get the actual lines out of it and also draw them
     lines_hough_points = []
-    for i in range(0, len(lines_hough)):
+    for i in range(len(lines_hough)):
         lines_hough_points.append([])
         rho = lines_hough[i][0][0]
         theta = lines_hough[i][0][1]
@@ -203,7 +203,7 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
         print("Hough-P lines count:", len(lines_hough_p))
 
     # draw the resulting lines of probabilistic Hough Lines algorithm
-    for i in range(0, len(lines_hough_p)):
+    for i in range(len(lines_hough_p)):
         line = lines_hough_p[i][0]
         cv2.line(
             img=lines_p_dst,
@@ -216,10 +216,12 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
         # print(line)
 
     final_img = np.copy(img)
-    # continue only if there are any lines to process
-    if len(lines_hough_p) > 0:
+    # continue only if there are enough lines to process
+    if len(lines_hough_p) < 5:
+        return []
+    else:
         lines = []
-        for i in range(0, len(lines_hough_p)):
+        for i in range(len(lines_hough_p)):
             x1 = lines_hough_p[i][0][0]
             y1 = lines_hough_p[i][0][1]
             x2 = lines_hough_p[i][0][2]
