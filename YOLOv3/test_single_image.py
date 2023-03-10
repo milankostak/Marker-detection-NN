@@ -18,6 +18,8 @@ from YOLOv3.model import yolov3
 
 base_path = "D:/Python/PycharmProjects/images/"
 
+folder = f"{base_path}test_eval/"
+
 args = SimpleObject()
 # The path of the anchor txt file.
 args.anchor_path = base_path + "marker_anchors.txt"
@@ -40,8 +42,8 @@ args.num_class = len(args.classes)
 
 color_table = get_color_table(args.num_class)
 
-if not os.path.exists(base_path + "test_eval/"):
-    os.mkdir(base_path + "test_eval/")
+if not os.path.exists(folder):
+    os.mkdir(folder)
 
 # img_ori = cv2.imread(args.input_image)
 # if args.letterbox_resize:
@@ -123,7 +125,7 @@ with tf.Session() as sess:
         results += "\n"
         # cv2.imshow('Detection result', img_ori)
         # cv2.waitKey(0)
-        cv2.imwrite(f"{base_path}test_eval/{name}_eval.jpg", img_orig)
+        cv2.imwrite(f"{folder}{name}_eval.jpg", img_orig)
 
     with open(base_path + "predicted.txt", "w") as file:
         file.write(results)
