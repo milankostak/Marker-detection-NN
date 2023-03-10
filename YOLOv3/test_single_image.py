@@ -2,19 +2,19 @@
 
 from __future__ import division, print_function
 
-import tensorflow as tf
-import numpy as np
-import cv2
 import glob
 import os
 
-from YOLOv3.utils.simple_object import SimpleObject
+import cv2
+import numpy as np
+import tensorflow as tf
+
+from YOLOv3.model import yolov3
+from YOLOv3.utils.data_aug import letterbox_resize
 from YOLOv3.utils.misc_utils import parse_anchors, read_class_names
 from YOLOv3.utils.nms_utils import gpu_nms
 from YOLOv3.utils.plot_utils import get_color_table, plot_one_box
-from YOLOv3.utils.data_aug import letterbox_resize
-
-from YOLOv3.model import yolov3
+from YOLOv3.utils.simple_object import SimpleObject
 
 base_path = "D:/Python/PycharmProjects/images/"
 

@@ -3,13 +3,12 @@ from __future__ import division, print_function
 import tensorflow as tf
 from tqdm import trange
 
-from YOLOv3.utils.simple_object import SimpleObject
+from YOLOv3.model import yolov3
 from YOLOv3.utils.data_utils import get_batch_data
 from YOLOv3.utils.eval_utils import get_preds_gpu, voc_eval, parse_gt_rec
 from YOLOv3.utils.misc_utils import parse_anchors, read_class_names, AverageMeter
 from YOLOv3.utils.nms_utils import gpu_nms
-
-from YOLOv3.model import yolov3
+from YOLOv3.utils.simple_object import SimpleObject
 
 base_path = "D:/Python/PycharmProjects/images/"
 
