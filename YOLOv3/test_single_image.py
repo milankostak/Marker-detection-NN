@@ -55,6 +55,9 @@ if not os.path.exists(folder):
 # img = np.asarray(img, np.float32)
 # img = img[np.newaxis, :] / 255.
 
+# config = tf.ConfigProto()
+# config.gpu_options.allow_growth = True
+# with tf.Session(config=config) as sess:
 with tf.Session() as sess:
     input_data = tf.placeholder(tf.float32, [1, args.new_size[1], args.new_size[0], 3], name="input_data")
     yolo_model = yolov3(args.num_class, args.anchors)
