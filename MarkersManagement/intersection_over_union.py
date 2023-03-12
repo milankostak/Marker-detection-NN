@@ -30,12 +30,14 @@ with open(base_path + "test.txt") as file:
 
 with open(base_path + "predicted.txt") as file:
     pred_lines = [line.rstrip() for line in file]
-pred_lines.sort(key=lambda x: int(x.split(" ")[0]))
+pred_lines.sort(key=lambda x: int(x.split(" ")[0].split("-")[0]))
 
 all_ious = []
 false_positive_count = 0
+false_positives = []
 false_positive_threshold = 0.2
 false_negative_count = 0
+false_negatives = []
 
 count = len(gt_lines)
 for i in range(count):
@@ -54,6 +56,7 @@ for i in range(count):
             possible_iou = bb_intersection_over_union(gt_box, pred_box)
             if possible_iou < false_positive_threshold:
                 false_positive_count += 1
+                false_positives.append(pred_line[0])
                 # print(pred_line)
                 # print(possible_iou)
             possible_ious.append(possible_iou)
@@ -64,11 +67,13 @@ for i in range(count):
         # this means they are all false positive and not found marker is a false negative
         if max_iou < false_positive_threshold:
             false_negative_count += 1
+            false_negatives.append(pred_line[0])
             # print(pred_line)
     else:
         max_iou = 0
         # no marker found in the image, but every image has 1 marker
         false_negative_count += 1
+        false_negatives.append(pred_line[0])
 
     print(pred_line[0], max_iou)
     all_ious.append(max_iou)
@@ -76,5 +81,9 @@ for i in range(count):
 # median = np.median(all_ious)
 mean = np.mean(all_ious)
 print(str(mean).replace(".", ","))
+print()
 print("false positive:", false_positive_count)
+print(false_positives)
+print()
 print("false negative:", false_negative_count)
+print(false_negatives)
