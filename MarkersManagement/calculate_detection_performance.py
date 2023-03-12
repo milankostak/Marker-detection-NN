@@ -82,13 +82,13 @@ for i in range(count):
             print(center_diff)
             print(true_angle, detected_angle, angle_diff)
 
-        detected_content = get_content2(detected_values[2], detected_values[3], detected_values[7], detected_values[5])
+        detected_content = get_content2(detected_values[2], detected_values[3], detected_values[4], detected_values[5])
         content_diff = abs(true_content - detected_content)
         if show_outputs:
             print(content_diff)
 
         data.append([image_id, center_diff, angle_diff, content_diff])
-        times.append(detected_values[10])
+        times.append(detected_values[6])
 
     if show_outputs:
         print()

@@ -552,10 +552,10 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
         return [
             (x_center, y_center),
             angle,
-            (x_main_1, y_main_1), (x_main_2, y_main_2),
-            (x_main_1, y_main_1), (x_main_3, y_main_3),
-            (x_main_2, y_main_2), (x_main_4, y_main_4),
-            (x_main_3, y_main_3), (x_main_4, y_main_4),
+            (x_main_1, y_main_1),  # top left
+            (x_main_2, y_main_2),  # top right
+            (x_main_4, y_main_4),  # bottom right
+            (x_main_3, y_main_3),  # bottom left
             [time1, time2, time_total],
         ]
 
