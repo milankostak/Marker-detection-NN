@@ -1,6 +1,7 @@
 import math
 
 import numpy as np
+from shapely.geometry import Polygon
 
 from MarkersManagement.get_cropped import get_cropped
 from MarkersManagement.get_data import get_data
@@ -63,6 +64,8 @@ for i in range(count):
 
     true_content = get_content2(true_p1, true_p2, true_p3, true_p4)
 
+    true_box = [true_p1, true_p2, true_p3, true_p4]
+
     # image_id_zeros = f"{image_id:04d}"
     img, base_x, base_y = get_cropped(image_id=image_id)
     detected_values = get_data(img=img, show_outputs=False)
@@ -87,7 +90,23 @@ for i in range(count):
         if show_outputs:
             print(content_diff)
 
-        data.append([image_id, center_diff, angle_diff, content_diff])
+        detected_box = [
+            [detected_values[2][0] + base_x, detected_values[2][1] + base_y],
+            [detected_values[3][0] + base_x, detected_values[3][1] + base_y],
+            [detected_values[4][0] + base_x, detected_values[4][1] + base_y],
+            [detected_values[5][0] + base_x, detected_values[5][1] + base_y]
+        ]
+
+        detected_polygon = Polygon(detected_box)
+        true_polygon = Polygon(true_box)
+
+        polygon_intersection = detected_polygon.intersection(true_polygon).area
+        polygon_union = detected_polygon.union(true_polygon).area
+        iou = polygon_intersection / polygon_union if polygon_union > 0 else 0
+        if show_outputs:
+            print(iou)
+
+        data.append([image_id, center_diff, angle_diff, content_diff, iou])
         times.append(detected_values[6])
 
     if show_outputs:
@@ -103,12 +122,13 @@ print()
 centers = data[:, 1].astype(np.float)
 angles = data[:, 2].astype(np.float)
 contents = data[:, 3].astype(np.float)
+ious = data[:, 4].astype(np.float)
 
 
-def get_metrics(values: np.ndarray, name: str, limit: int):
+def get_metrics(values: np.ndarray, name: str, limit: float, reverse: bool = False):
     print(f"{name} median: {np.median(values):.2f}")
     print(f"{name} mean: {np.mean(values):.2f}")
-    values_good = values[values < limit]
+    values_good = values[values < limit] if not reverse else values[values > limit]
     print(f"{name} good count:", values_good.shape[0])
     print(f"{name} bad count:", data.shape[0] - values_good.shape[0])
     print(f"{name} good percent: {(values_good.shape[0] / values.shape[0]) * 100:.2f}%")
@@ -120,6 +140,7 @@ def get_metrics(values: np.ndarray, name: str, limit: int):
 get_metrics(centers, "Centers", 60)
 get_metrics(angles, "Angles", 30)
 get_metrics(contents, "Contents", 10000)
+get_metrics(ious, "IoUs", 0.3, reverse=True)
 
 if show_outputs:
     print(data)
