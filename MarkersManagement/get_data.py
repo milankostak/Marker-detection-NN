@@ -3,7 +3,7 @@ import time
 
 import cv2
 import numpy as np
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt, rcParams
 
 from MarkersManagement.get_cropped import get_cropped
 
@@ -17,6 +17,9 @@ def get_xy(k1, q1, k2, q2):
     :param q2: y intersection 2
     :return: the intersection as a list of two values [x,y]
     """
+    if k1 == k2:
+        print("k1 == k2 - cannot get XY")
+        return [None, None]
     x = (q2 - q1) / (k1 - k2)
     y = k2 * x + q2
     return [int(round(x)), int(round(y))]
@@ -55,7 +58,7 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
     # plt.title("RGB histogram")
     # plt.show()
 
-    # convert image to HSV model; get hue histogram; then get the most common hue value
+    # convert image to HSV model; get hue histogram; then get the most common hue
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
     # TODO pixels towards the center of the image might need more weight
@@ -125,6 +128,7 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
     if hue_threshold <= target_hue <= 180 - hue_threshold:
         h[h < target_hue - hue_threshold] = 0
         h[h > target_hue + hue_threshold] = 0
+        # h[np.logical_and(h >= target_hue - hue_threshold, h <= target_hue + hue_threshold)] = 1000
     elif target_hue < hue_threshold:
         # if target_hue is too low
         h[np.logical_and(target_hue - hue_threshold + 180 > h, h > target_hue + hue_threshold)] = 0
@@ -156,7 +160,7 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
 
     # after erosion, apply dilatation to get to the original size of the marker
     # some noise space might again appear, but there should be only a few, so they do not break the further steps
-    dilatation_size = 5
+    dilatation_size = erosion_size - 1  # do not go fully back, has better results like this, (1669-t09)
     element = cv2.getStructuringElement(
         shape=cv2.MORPH_RECT,
         ksize=(2 * dilatation_size + 1, 2 * dilatation_size + 1),
@@ -249,6 +253,8 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
             threshold=threshold_hough_p,
             minLineLength=15,
             maxLineGap=50
+            # minLineLength=round(np.max(img.shape) / 15),
+            # maxLineGap=round(np.max(img.shape) / 5),
         )
         if threshold_hough_p < 0:
             # if no lines cannot be detected in the image
@@ -300,21 +306,23 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
             y2 = lines_hough_p[i][0][3]
             length = math.sqrt(math.pow(x2 - x1, 2) + math.pow(y2 - y1, 2))
             if x2 == x1:  # TODO solve in a better way including better handling of |k| > 1 situations
-                continue
+                # continue
+                x1 = x1 + 1
             k = (y2 - y1) / (x2 - x1)
             q = y1 - k * x1
             lines.append([k, q, length, x1, y1, x2, y2])
         lines.sort(key=lambda val: val[0])
-        # kqs.sort()
 
         # calculate differences between the slopes of the lines
         # calculated as atan because the differences are not equally distributed in the plain slope "k" values
         diffs = []
+        # quartile = np.quantile(lines, 0.25, axis=0)[2] # using only lines long enough, did not improve the results
+        # lines = list(filter(lambda line_: line_[2] > quartile, lines)) # (0.25, 0.2, 0.1)
         for i in range(1, len(lines)):
             diffs.append(math.atan(lines[i][0]) - math.atan(lines[i - 1][0]))
         if len(diffs) == 0:
             return []
-        # find 3 largest spaces between the values - there are usually very distinctive from other values
+        # find 3 largest spaces between the values - they are usually very distinctive from other values
         # the 3 values are the dividers between 4 clusters of lines with different slopes
         # given the marker characteristics, the slopes of the lines can be clearly divided into 4 clusters
         max_index_1 = np.argsort(diffs)[-1] + 1
@@ -371,6 +379,8 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
         q_inner_2 = np.mean(list(map(lambda val: val[1], inner_2)))
 
         x_center, y_center = get_xy(k_inner_1, q_inner_1, k_inner_2, q_inner_2)
+        if x_center is None:
+            return []
         if show_outputs:
             cv2.circle(final_img, center=(x_center, y_center), radius=5, color=(0, 0, 255), thickness=4)
 
@@ -430,7 +440,7 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
             angle = 360 - angle
 
         if show_outputs:
-            print("orientation:", str(round(angle)) + "°")
+            print(f"orientation: {angle:.1f}°")
             cv2.putText(
                 img=final_img,
                 text=str(round(angle)),
@@ -475,8 +485,9 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
         qs_main_1.sort()
         qs_main_2.sort()
 
-        # after sorting, calculated the difference between the values
+        # after sorting, calculate the difference between the values
         # one of the differences should be very high - this will be the division point
+        # noinspection DuplicatedCode
         diffs_qs_1 = []
         for i in range(1, len(qs_main_1)):
             diffs_qs_1.append(qs_main_1[i] - qs_main_1[i - 1])
@@ -564,7 +575,20 @@ if __name__ == '__main__':
     # image_id = "0149"
     # image_id = "0181"
     # image_id = "0211"  # svislá
-    # image_id = "0385"  # !
-    image_id = "0416"
-    img_, x, y, = get_cropped(image_id)
+    # image_id = "0385"  # ! # poslední
+    # image_id = "0416"
+    image_id = "1518-t06"  # dobrá
+    # image_id = "1197-r35"  # taky docela dobrá
+    # image_id = "1239-r36"
+    # image_id = "1669-t09"
+    # image_id = "2160-t19"
+    # image_id = "2678-r06"
+    # image_id = "2804-r08"
+    # image_id = "2879-r10"  # !
+    # image_id = "2963-r11"
+    # image_id = "3198-t29"
+    # image_id = "3460-t34"
+    # image_id = "0460-r21"
+    # image_id = "0635-r24"
+    img_, x_, y_, = get_cropped(image_id=image_id, padding=15)
     print(get_data(img_))
