@@ -23,24 +23,36 @@ def get_xy(k1, q1, k2, q2):
 
 
 def get_data(img: np.ndarray, show_outputs: bool = True):
+    write_outputs = False
+    measure_time = False
+
+    time_start = None
+    time_between = None
+    time1 = None
+    time2 = None
+    time_total = None
+
     if img is None:
         return []
 
-    start = time.time()
+    if measure_time:
+        time_start = time.time()
     if show_outputs:
         cv2.imshow("cropped", img)
+    if write_outputs:
+        cv2.imwrite("cropped.png", img)
 
     # div = 16
     # img = img // div * div + div // 2
     # quantization of the image did not bring any good results
 
     # RGB histogram
-    colors = ("b", "g", "r")
-    for k, color in enumerate(colors):
-        histogram = cv2.calcHist(images=[img], channels=[k], mask=None, histSize=[256], ranges=[0, 256])
-        plt.plot(histogram, color=color)
-        plt.xlim([0, 256])
-    plt.title("RGB histogram")
+    # colors = ("b", "g", "r")
+    # for k, color in enumerate(colors):
+    #     histogram = cv2.calcHist(images=[img], channels=[k], mask=None, histSize=[256], ranges=[0, 256])
+    #     plt.plot(histogram, color=color)
+    #     plt.xlim([0, 256])
+    # plt.title("RGB histogram")
     # plt.show()
 
     # convert image to HSV model; get hue histogram; then get the most common hue value
@@ -65,14 +77,44 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
     cv2.fillPoly(img=mask, pts=[points], color=255)
     if show_outputs:
         cv2.imshow("Histogram mask", mask)
+    if write_outputs:
+        cv2.imwrite("mask.png", mask)
+
+    if show_outputs or write_outputs:
+        masked = cv2.bitwise_and(img, img, mask=mask)
+        if show_outputs:
+            cv2.imshow("masked", masked)
+        if write_outputs:
+            cv2.imwrite("masked.png", masked)
 
     hist = cv2.calcHist(images=[hsv], channels=[0], mask=mask, histSize=[180], ranges=[0, 180])
     target_hue = np.argmax(hist)
     if show_outputs:
+        # histogram plot needs histSize=[360]
         print("Final hue:", target_hue * 2)
-    plt.title("Hue histogram")
-    # plt.plot(hist)
-    # plt.show()
+        # rcParams["figure.figsize"] = 8, 5
+        # # rcParams["font.size"] = 20
+        # rcParams["axes.titlepad"] = 15
+        # rcParams["axes.labelpad"] = 10
+        # rcParams["axes.xmargin"] = 0
+        # # rcParams["axes.ymargin"] = 0
+        #
+        # fig, ax = plt.subplots()
+        # plt.rcParams.update({"font.size": 13})
+        # plt.title("Histogram odstínů (hue)")
+        #
+        # plt.xlabel("hodnota odstínu (hue)", fontsize=13)
+        # plt.ylabel("počet pixelů", fontsize=13)
+        # ax.axvline(x=target_hue, color="red", linestyle="dashed", label="odstín s nejvyšším zastoupením")
+        # ax.bar(x=np.arange(len(hist)), height=hist.flatten(), width=2)
+        # # plt.tight_layout(pad=1.2)
+        # ax.grid(axis="y")
+        # ax.legend(loc="upper left", prop={"size": 11}, fancybox=False, shadow=False)
+        #
+        # ax.tick_params(axis="x", labelsize=12)
+        # ax.tick_params(axis="y", labelsize=12)
+        # plt.savefig("histogram.svg", format="svg")
+        # plt.show()
 
     h, s, v = cv2.split(hsv)
     # take only the hue component and filter all other pixels that have different hue
@@ -92,6 +134,8 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
 
     if show_outputs:
         cv2.imshow("Hue HSV component", h)
+    if write_outputs:
+        cv2.imwrite("hue.png", h)
     # s[s < 100] = 0
     # v[v < 128] = 0
     # cv2.imshow("Saturation HSV component", s)
@@ -107,6 +151,8 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
     erosion_dst = cv2.erode(src=h, kernel=element)
     if show_outputs:
         cv2.imshow("Erosion", erosion_dst)
+    if write_outputs:
+        cv2.imwrite("erosion.png", erosion_dst)
 
     # after erosion, apply dilatation to get to the original size of the marker
     # some noise space might again appear, but there should be only a few, so they do not break the further steps
@@ -119,11 +165,15 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
     dilatation_dst = cv2.dilate(src=erosion_dst, kernel=element)
     if show_outputs:
         cv2.imshow("Dilatation", dilatation_dst)
+    if write_outputs:
+        cv2.imwrite("dilatation.png", dilatation_dst)
 
     # apply Gaussian blur before thresholding
     blur_dst = cv2.GaussianBlur(src=dilatation_dst, ksize=(11, 11), sigmaX=0)
     if show_outputs:
         cv2.imshow("Blur", blur_dst)
+    if write_outputs:
+        cv2.imwrite("blur.png", blur_dst)
 
     # threshold the result with Otsu's adaptive thresholding
     threshold_value, threshold_dst = cv2.threshold(
@@ -132,6 +182,8 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
     if show_outputs:
         print("Otsu's threshold value:", threshold_value)
         cv2.imshow("After Otsu's thresholding", threshold_dst)
+    if write_outputs:
+        cv2.imwrite("otsu.png", threshold_dst)
 
     # apply canny edges detector
     edges_dst = cv2.Canny(image=threshold_dst, threshold1=50, threshold2=200, edges=None, apertureSize=3)
@@ -238,6 +290,8 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
     if len(lines_hough_p) < 5:
         return []
     else:
+        if measure_time:
+            time_between = time.time()
         lines = []
         for i in range(len(lines_hough_p)):
             x1 = lines_hough_p[i][0][0]
@@ -455,13 +509,20 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
         x_main_3, y_main_3 = get_xy(k_main_1, q_main_1_2, k_main_2, q_main_2_1)
         x_main_4, y_main_4 = get_xy(k_main_1, q_main_1_2, k_main_2, q_main_2_2)
 
+        if measure_time:
+            time_end = time.time()
+            time1 = time_between - time_start
+            time2 = time_end - time_between
+            time_total = time_end - time_start
+
+            if show_outputs:
+                print("time:", time_end - time_start)
+
         if show_outputs:
             cv2.line(final_img, (x_main_1, y_main_1), (x_main_2, y_main_2), (0, 255, 0), 2, cv2.LINE_AA)
             cv2.line(final_img, (x_main_1, y_main_1), (x_main_3, y_main_3), (0, 255, 0), 2, cv2.LINE_AA)
             cv2.line(final_img, (x_main_2, y_main_2), (x_main_4, y_main_4), (0, 255, 0), 2, cv2.LINE_AA)
             cv2.line(final_img, (x_main_3, y_main_3), (x_main_4, y_main_4), (0, 255, 0), 2, cv2.LINE_AA)
-            end = time.time()
-            print(end - start)
 
             cv2.imshow("Canny", edges_dst)
             cv2.imshow("Standard Hough Line Transform", lines_dst)
@@ -471,6 +532,12 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
             cv2.waitKey(0)
             cv2.destroyAllWindows()
 
+        if write_outputs:
+            cv2.imwrite("canny.png", edges_dst)
+            cv2.imwrite("hough.png", lines_dst)
+            cv2.imwrite("hough-p.png", lines_p_dst)
+            cv2.imwrite("final.png", final_img)
+
         return [
             (x_center, y_center),
             angle,
@@ -478,6 +545,7 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
             (x_main_1, y_main_1), (x_main_3, y_main_3),
             (x_main_2, y_main_2), (x_main_4, y_main_4),
             (x_main_3, y_main_3), (x_main_4, y_main_4),
+            [time1, time2, time_total],
         ]
 
 

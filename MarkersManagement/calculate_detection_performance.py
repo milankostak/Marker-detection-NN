@@ -26,7 +26,10 @@ base_path = "D:/Python/PycharmProjects/images/"
 with open(base_path + "test/marker_data.txt") as file:
     markers = [line.rstrip() for line in file]
 
+show_outputs = True
+
 data = []
+times = []
 count = len(markers)
 for i in range(count):
     marker = markers[i].split(" ")
@@ -49,7 +52,8 @@ for i in range(count):
     detected_values = get_data(img=img, show_outputs=False)
 
     if len(detected_values) == 0:
-        print("False negative case")
+        if show_outputs:
+            print("False negative case")
     else:
         detected_center = detected_values[0]
         detected_angle = detected_values[1]
@@ -66,7 +70,13 @@ for i in range(count):
         print(content_diff)
 
         data.append([image_id_zeros, center_diff, angle_diff, content_diff])
-    print("")
+        times.append(detected_values[10])
+
+    if show_outputs:
+        print()
+
+# print("TIMES")
+# print(np.mean(np.array(times), axis=0))
 
 data = np.array(data)
 print("Total count:", data.shape[0])
