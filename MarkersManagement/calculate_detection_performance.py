@@ -23,7 +23,7 @@ def get_content(pp1, pp2, pp3, pp4):
 
 base_path = "D:/Python/PycharmProjects/images/"
 
-with open(base_path + "test/marker_data.txt") as file:
+with open(base_path + "test.txt") as file:
     markers = [line.rstrip() for line in file]
 
 show_outputs = True
@@ -33,22 +33,24 @@ times = []
 count = len(markers)
 for i in range(count):
     marker = markers[i].split(" ")
-    image_id = int(marker[0])
+    # image_id = int(marker[0])
     image_path = marker[1]
-    center_x = int(marker[2])
-    center_y = int(marker[3])
-    angle = float(marker[4])
+    image_id = image_path.split("\\")[-1].split(".")[0]
+    if show_outputs:
+        print(image_id)
+    true_center_x = int(marker[9])
+    true_center_y = int(marker[10])
+    true_angle = float(marker[11])
 
-    p1 = (int(marker[5]), int(marker[6]))
-    p2 = (int(marker[7]), int(marker[8]))
-    p3 = (int(marker[9]), int(marker[10]))
-    p4 = (int(marker[11]), int(marker[12]))
+    true_p1 = (int(marker[12]), int(marker[13]))
+    true_p2 = (int(marker[14]), int(marker[15]))
+    true_p3 = (int(marker[16]), int(marker[17]))
+    true_p4 = (int(marker[18]), int(marker[19]))
 
-    content = get_content(p1, p2, p3, p4)
+    true_content = get_content(true_p1, true_p2, true_p3, true_p4)
 
-    image_id_zeros = f"{image_id:04d}"
-    print(image_id_zeros)
-    img, base_x, base_y = get_cropped(image_id=image_id_zeros)
+    # image_id_zeros = f"{image_id:04d}"
+    img, base_x, base_y = get_cropped(image_id=image_id)
     detected_values = get_data(img=img, show_outputs=False)
 
     if len(detected_values) == 0:
@@ -57,19 +59,21 @@ for i in range(count):
     else:
         detected_center = detected_values[0]
         detected_angle = detected_values[1]
-        angle_diff = abs(angle - detected_angle)
+        angle_diff = abs(true_angle - detected_angle)
         if angle_diff > 180:
             angle_diff = 360 - angle_diff
 
-        detected_content = get_content(detected_values[2], detected_values[3], detected_values[4], detected_values[5])
+        center_diff = length(detected_center, (true_center_x - base_x, true_center_y - base_y))
+        if show_outputs:
+            print(center_diff)
+            print(true_angle, detected_angle, angle_diff)
 
-        center_diff = length(detected_center, (center_x - base_x, center_y - base_y))
-        print(center_diff)
-        print(angle, detected_angle, angle_diff)
-        content_diff = abs(content - detected_content)
-        print(content_diff)
+        detected_content = get_content(detected_values[2], detected_values[3], detected_values[4], detected_values[6])
+        content_diff = abs(true_content - detected_content)
+        if show_outputs:
+            print(content_diff)
 
-        data.append([image_id_zeros, center_diff, angle_diff, content_diff])
+        data.append([image_id, center_diff, angle_diff, content_diff])
         times.append(detected_values[10])
 
     if show_outputs:
@@ -87,7 +91,7 @@ angles = data[:, 2].astype(np.float)
 contents = data[:, 3].astype(np.float)
 
 
-def asdf(values: np.ndarray, name: str, limit: int):
+def get_metrics(values: np.ndarray, name: str, limit: int):
     print(f"{name} median: {np.median(values):.2f}")
     print(f"{name} mean: {np.mean(values):.2f}")
     values_good = values[values < limit]
@@ -99,8 +103,9 @@ def asdf(values: np.ndarray, name: str, limit: int):
     print()
 
 
-asdf(centers, "Centers", 60)
-asdf(angles, "Angles", 30)
-asdf(contents, "Contents", 5000)
+get_metrics(centers, "Centers", 60)
+get_metrics(angles, "Angles", 30)
+get_metrics(contents, "Contents", 10000)
 
-# print(data)
+if show_outputs:
+    print(data)
