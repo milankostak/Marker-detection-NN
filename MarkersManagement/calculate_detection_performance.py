@@ -21,6 +21,20 @@ def get_content(pp1, pp2, pp3, pp4):
     return length_average * length_average
 
 
+def get_content2(pp1, pp2, pp3, pp4):
+    # https://en.wikipedia.org/wiki/Quadrilateral#Non-trigonometric_formulas
+    a = length(pp1, pp2)
+    b = length(pp2, pp3)
+    c = length(pp3, pp4)
+    d = length(pp4, pp1)
+    s = (a + b + c + d) / 2.0
+    p = length(pp1, pp3)
+    q = length(pp2, pp4)
+
+    value = (s - a) * (s - b) * (s - c) * (s - d) - 0.25 * (a * c + b * d + p * q) * (a * c + b * d - p * q)
+    return math.sqrt(value) if value > 0 else 0
+
+
 base_path = "D:/Python/PycharmProjects/images/"
 
 with open(base_path + "test.txt") as file:
@@ -47,7 +61,7 @@ for i in range(count):
     true_p3 = (int(marker[16]), int(marker[17]))
     true_p4 = (int(marker[18]), int(marker[19]))
 
-    true_content = get_content(true_p1, true_p2, true_p3, true_p4)
+    true_content = get_content2(true_p1, true_p2, true_p3, true_p4)
 
     # image_id_zeros = f"{image_id:04d}"
     img, base_x, base_y = get_cropped(image_id=image_id)
@@ -68,7 +82,7 @@ for i in range(count):
             print(center_diff)
             print(true_angle, detected_angle, angle_diff)
 
-        detected_content = get_content(detected_values[2], detected_values[3], detected_values[4], detected_values[6])
+        detected_content = get_content2(detected_values[2], detected_values[3], detected_values[7], detected_values[5])
         content_diff = abs(true_content - detected_content)
         if show_outputs:
             print(content_diff)
