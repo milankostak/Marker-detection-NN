@@ -1,6 +1,6 @@
 import cv2
 
-base_path = "D:/Python/PycharmProjects/images/"
+base_path = "D:/images/draw3/divided/"
 
 with open(f"{base_path}predicted.txt", "r") as file:
     lines = [line.rstrip().split(" ") for line in file]

@@ -23,7 +23,7 @@ def bb_intersection_over_union(box_a, box_b):
     return iou
 
 
-base_path = "D:/Python/PycharmProjects/images/"
+base_path = "D:/images/draw3/divided/"
 
 with open(base_path + "test.txt") as file:
     gt_lines = [line.rstrip() for line in file]

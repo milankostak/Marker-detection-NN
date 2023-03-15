@@ -16,7 +16,7 @@ from YOLOv3.utils.nms_utils import gpu_nms
 from YOLOv3.utils.plot_utils import get_color_table, plot_one_box
 from YOLOv3.utils.simple_object import SimpleObject
 
-base_path = "D:/Python/PycharmProjects/images/"
+base_path = "D:/images/draw3/divided/"
 
 folder = f"{base_path}test_eval/"
 
@@ -30,7 +30,8 @@ args.letterbox_resize = True
 # The path of the class names.
 args.class_name_path = base_path + "data.names"
 # The path of the weights to restore.
-args.restore_path = "./data/darknet_weights/yolov3.ckpt"
+# args.restore_path = "./data/darknet_weights/yolov3.ckpt"
+args.restore_path = base_path + "checkpoint/1/model-epoch_48_step_19060_loss_0.0361_lr_3e-05"
 # The probability threshold that the proposed bounding box needs to meet
 args.score_thresh = 0.3
 # The IoU threshold for non-maximum suppression (NMS) of similar bounding boxes; lower value cuts more

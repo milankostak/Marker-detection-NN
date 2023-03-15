@@ -10,7 +10,7 @@ from YOLOv3.utils.misc_utils import parse_anchors, read_class_names, AverageMete
 from YOLOv3.utils.nms_utils import gpu_nms
 from YOLOv3.utils.simple_object import SimpleObject
 
-base_path = "D:/Python/PycharmProjects/images/"
+base_path = "D:/Python/PycharmProjects/marker_testing/T_cross_real2/"
 
 args = SimpleObject()
 # The path of the anchor txt file.
@@ -22,7 +22,8 @@ args.letterbox_resize = True
 # The path of the class names.
 args.class_name_path = base_path + "data.names"
 # The path of the weights to restore.
-args.restore_path = "./data/darknet_weights/yolov3.ckpt"
+# args.restore_path = "./data/darknet_weights/yolov3.ckpt"
+args.restore_path = base_path + "checkpoint/50/best_model_Epoch_36_step_2404_mAP_0.8841_loss_0.7208_lr_3e-05"
 # The path of the validation or test txt file.
 args.val_file = base_path + "val.txt"
 # Number of threads for image processing used in tf.data pipeline.

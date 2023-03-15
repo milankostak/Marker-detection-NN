@@ -10,7 +10,7 @@ import os.path
 from YOLOv3.utils.misc_utils import parse_anchors, read_class_names
 
 # Some paths
-base_path = "D:/Python/PycharmProjects/images/"
+base_path = "D:/Python/PycharmProjects/draw3/divided/"
 train_file = base_path + "train.txt"  # The path of the training txt file.
 val_file = base_path + "val.txt"  # The path of the validation txt file.
 restore_path = "./data/darknet_weights/yolov3.ckpt"  # The path of the weights to restore.

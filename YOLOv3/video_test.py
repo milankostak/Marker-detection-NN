@@ -15,7 +15,7 @@ from YOLOv3.utils.data_aug import letterbox_resize
 
 from YOLOv3.model import yolov3
 
-base_path = "D:/Python/PycharmProjects/images/"
+base_path = "D:/Python/PycharmProjects/draw3/divided/"
 
 args = SimpleObject()
 # The path of the anchor txt file.
@@ -27,7 +27,8 @@ args.letterbox_resize = True
 # The path of the class names.
 args.class_name_path = base_path + "data.names"
 # The path of the weights to restore.
-args.restore_path = "./data/darknet_weights/yolov3.ckpt"
+# args.restore_path = "./data/darknet_weights/yolov3.ckpt"
+args.restore_path = base_path + "checkpoint/50/best_model_Epoch_36_step_2404_mAP_0.8841_loss_0.7208_lr_3e-05"
 # Whether to save the video detection results.
 args.save_video = False
 # The probability threshold that the proposed bounding box needs to meet
