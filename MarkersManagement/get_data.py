@@ -279,8 +279,8 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
         print("Hough-P lines count:", len(lines_hough_p))
 
     # draw the resulting lines of probabilistic Hough Lines algorithm
-    for i in range(len(lines_hough_p)):
-        line = lines_hough_p[i][0]
+    for line_hough_p in lines_hough_p:
+        line = line_hough_p[0]
         cv2.line(
             img=lines_p_dst,
             pt1=(line[0], line[1]),
@@ -299,11 +299,11 @@ def get_data(img: np.ndarray, show_outputs: bool = True):
         if measure_time:
             time_between = time.time()
         lines = []
-        for i in range(len(lines_hough_p)):
-            x1 = lines_hough_p[i][0][0]
-            y1 = lines_hough_p[i][0][1]
-            x2 = lines_hough_p[i][0][2]
-            y2 = lines_hough_p[i][0][3]
+        for line_hough_p in lines_hough_p:
+            x1 = line_hough_p[0][0]
+            y1 = line_hough_p[0][1]
+            x2 = line_hough_p[0][2]
+            y2 = line_hough_p[0][3]
             length = math.sqrt(math.pow(x2 - x1, 2) + math.pow(y2 - y1, 2))
             if x2 == x1:  # TODO solve in a better way including better handling of |k| > 1 situations
                 # continue
