@@ -1,3 +1,33 @@
+***Original README is below (YOLOv3 TensorFlow).***
+
+## `args.py`
+The file contains all parameters and paths for the NN training.
+
+## `convert_weight.py`
+After the initial download, the script converts the weights.
+
+## `eval.py`
+Post-training evaluation on validation (or any other) set of data.
+
+## `get_kmeans.py`
+Calculate clusters of sizes of training bounding boxes.
+
+## `model.py`
+Definition of the YOLOv3 model.
+
+## `order.txt`
+Just a text file with the order of operations and file editing when doing the training.
+
+## `test_single_image.py`
+Take all test images and detect the objects in them. It also saves the file with the predicted information and the images with the detected bounding boxes.
+
+## `train.py`
+Main training file.
+
+## `video_test.py`
+Test the trained network on a video stream.
+
+
 #  YOLOv3 TensorFlow
 
 ### Forked from https://github.com/wizyoung/YOLOv3_TensorFlow

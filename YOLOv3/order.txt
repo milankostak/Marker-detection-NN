@@ -1,0 +1,6 @@
+1. edit create_markers.py, args.py, test_single_image.py, intersection_over_union.py
+2. create_markers
+3. get_kmeans
+4. train
+5. test_single_image
+6. intersection_over_union

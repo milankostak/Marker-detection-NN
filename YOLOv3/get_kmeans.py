@@ -11,7 +11,7 @@ def iou(box, clusters):
     """
     Calculates the Intersection over Union (IoU) between a box and k clusters.
     param:
-        box: tuple or array, shifted to the origin (i. e. width and height)
+        box: tuple or array, shifted to the origin (i.e. width and height)
         clusters: numpy array of shape (k, 2) where k is the number of clusters
     return:
         numpy array of shape (k, 0) where k is the number of clusters
