@@ -1,6 +1,6 @@
-## Forked from https://github.com/wizyoung/YOLOv3_TensorFlow
+#  YOLOv3 TensorFlow
 
-#  YOLOv3_TensorFlow
+### Forked from https://github.com/wizyoung/YOLOv3_TensorFlow
 
 ### 1. Introduction
 
@@ -8,7 +8,7 @@ This is implementation of [YOLOv3](https://pjreddie.com/media/files/papers/YOLOv
 
 - Efficient tf.data pipeline
 - Weights converter (converting pretrained darknet weights on COCO dataset to TensorFlow checkpoint.)
-- Extremely fast GPU non maximum supression.
+- Extremely fast GPU non maximum suppression.
 - Full training and evaluation pipeline.
 - Kmeans algorithm to select prior anchor boxes.
 
@@ -22,7 +22,7 @@ Packages:
 - opencv-python
 - tqdm
 
-### 3. Weights convertion
+### 3. Weights conversion
 
 The pretrained darknet weights file can be downloaded [here](https://pjreddie.com/media/files/yolov3.weights). Place this weights file under directory `./data/darknet_weights/` and then run:
 
@@ -32,7 +32,7 @@ python convert_weight.py
 
 Then the converted TensorFlow checkpoint file will be saved to `./data/darknet_weights/` directory.
 
-You can also download the converted TensorFlow checkpoint file by me via [[Google Drive link](https://drive.google.com/drive/folders/1mXbNgNxyXPi7JNsnBaxEv1-nWr7SVoQt?usp=sharing)] or [[Github Release](https://github.com/wizyoung/YOLOv3_TensorFlow/releases/)] and then place it to the same directory.
+You can also download the converted TensorFlow checkpoint file by me via [[Google Drive link](https://drive.google.com/drive/folders/1mXbNgNxyXPi7JNsnBaxEv1-nWr7SVoQt?usp=sharing)] or [[GitHub Release](https://github.com/wizyoung/YOLOv3_TensorFlow/releases/)] and then place it to the same directory.
 
 ### 4. Running demos
 
@@ -54,13 +54,12 @@ python video_test.py ./data/demo_data/video.mp4
 
 How fast is the inference speed? With images scaled to 416*416:
 
-
 | Backbone              |   GPU    | Time(ms) |
-| :-------------------- | :------: | :------: |
+|:----------------------|:--------:|:--------:|
 | Darknet-53 (paper)    | Titan X  |    29    |
 | Darknet-53 (my impl.) | Titan XP |   ~23    |
 
-why is it so fast? Check the ImageNet classification result comparision from the paper:
+why is it so fast? Check the ImageNet classification result comparison from the paper:
 
 ![](https://github.com/wizyoung/YOLOv3_TensorFlow/blob/master/docs/backbone.png?raw=true)
 
@@ -86,7 +85,7 @@ For example:
 ...
 ```
 
-Since so many users report to use tools like LabelImg to generate xml format annotations, I add one demo script on VOC dataset to do the convertion. Check the `misc/parse_voc_xml.py` file for more details.
+Since so many users report to use tools like LabelImg to generate xml format annotations, I add one demo script on VOC dataset to do the conversion. Check the `misc/parse_voc_xml.py` file for more details.
 
 (2)  class_names file:
 
@@ -176,9 +175,9 @@ Just restore the whole weight file except the last three convolution layers (Con
 - Mix up data augmentation
 - Focal loss
 
-These are all good strategies but it does **not** mean they will definitely improve the performance. You should choose the appropriate strategies for your own task.
+These are all good strategies, but it does **not** mean they will definitely improve the performance. You should choose the appropriate strategies for your own task.
 
-This [paper](https://arxiv.org/abs/1902.04103) from gluon-cv has proved that data augmentation is critical to YOLO v3, which is completely in consistent with my own experiments. Some data augmentation strategies that seems reasonable may lead to poor performance. For example, after introducing random color jittering, the mAP on my own dataset drops heavily. Thus I hope  you pay extra attention to the data augmentation.
+This [paper](https://arxiv.org/abs/1902.04103) from gluon-cv has proved that data augmentation is critical to YOLO v3, which is completely in consistent with my own experiments. Some data augmentation strategies that seems reasonable may lead to poor performance. For example, after introducing random color jittering, the mAP on my own dataset drops heavily. Thus, I hope you pay extra attention to the data augmentation.
 
 (4) Loss nan? Setting a bigger warm_up_epoch number or smaller learning rate and try several more times. If you fine-tune the whole model, using adam may cause nan value sometimes. You can try choosing momentum optimizer.
 
@@ -186,7 +185,7 @@ This [paper](https://arxiv.org/abs/1902.04103) from gluon-cv has proved that dat
 
 I did a quick train on the VOC dataset. The params I used in my experiments are included under `misc/experiments_on_voc/` folder for your reference. The train dataset is the VOC 2007 + 2012 trainval set, and the test dataset is the VOC 2007 test set.
 
-Finally with the 416\*416 input image, I got a 87.54% test mAP (not using the 07 metric). No hard-try fine-tuning. You should get the similar or better results.
+Finally, with the 416\*416 input image, I got an 87.54% test mAP (not using the 07 metric). No hard-try fine-tuning. You should get the similar or better results.
 
 My pretrained weights on VOC dataset can be downloaded [here](https://drive.google.com/drive/folders/1ICKcJPozQOVRQnE1_vMn90nr7dejg0yW?usp=sharing).
 
