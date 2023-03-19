@@ -1,9 +1,6 @@
 ## MarkersManagement
 
-The folder contains python scripts for markers management:
-* generate artificial markers
-* calculate IoU
-* divide images into train/val/test folders
+The folder contains python scripts for markers management. More details can be found in the readme file directly in the folder.
 
 ## TensorFlow
 
