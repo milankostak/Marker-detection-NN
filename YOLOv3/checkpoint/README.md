@@ -1,0 +1,1 @@
+Trained checkpoints will be placed in this folder.
